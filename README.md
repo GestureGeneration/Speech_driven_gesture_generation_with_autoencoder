@@ -48,7 +48,8 @@ ________________________________________________________________________________
 - Run the following command
 
 ```sh
-python prepare_data.py DATA_DIR  # DATA_DIR = directory to save data such as 'data/'
+python data_processing/prepare_data.py DATA_DIR
+# DATA_DIR = directory to save data such as 'data/'
 ```
 
 - `train/` `test/` `dev/` are created under `DATA_DIR/`  
@@ -61,11 +62,16 @@ python prepare_data.py DATA_DIR  # DATA_DIR = directory to save data such as 'da
 ## 3. Convert the dataset into vectors
 
 ```sh
-python create_vector.py DATA_DIR N_CONTEXT  # N_CONTEXT = number of context, currently '60' (this means 30 steps backwards and forwards)
+python data_processing/create_vector.py DATA_DIR N_CONTEXT
+# N_CONTEXT = number of context, by default '60'
+# (this means 30 steps backwards and forwards)
 ```
+
+Note: if you change the N_CONTEXT value - you need to update it in the `train.py` script.
 
 (You are likely to get a warning like this "WARNING:root:frame length (5513) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid." )
 
+As a result of running this script
 - numpy binary files `X_train.npy`, `Y_train.npy` (vectord dataset) are created under `DATA_DIR`
 - under `DATA_DIR/test_inputs/` , test audios, such as `X_test_audio1169.npy` , are created  
 - when N_CONTEXT = 60, the audio vector's shape is (num of timesteps, 61, 26) 
@@ -73,7 +79,22 @@ python create_vector.py DATA_DIR N_CONTEXT  # N_CONTEXT = number of context, cur
   - 384 = 64joints × (x,y,z positions + x,y,z velocities)
 
 
-## 4. Train a model
+## 4. (Optional) Learn motion representation by AutoEncoder
+
+### Learn dataset encoding
+```sh
+python motion_repr_learning/learn_dataset_encoding.py DATA_DIR -chkpt_dir=CHKPT_DIR -layer1_width=DIM
+```
+
+### Encode dataset
+```sh
+python motion_repr_learning/encode_dataset.py DATA_DIR -chkpt_dir=CHKPT_DIR -restore=True -pretrain=False -layer1_width=DIM
+```
+
+More information can be found in the folder `motion_repr_learning` 
+
+
+## 5. Learn speech-driven gesture generation model
 
 ```sh
 python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE N_OUTPUT
@@ -81,13 +102,11 @@ python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE N_OUTPUT
 # EPOCHS = how many epochs do we want to train the model (recommended - 100)
 # DATA_DIR = directory with the data (should be same as above)
 # N_INPUT = how many dimension does speech data have (default - 26)
-# ENCODE = weather we train on the encoded dataset
+# ENCODE = weather we train on the encoded gestures (using proposed model) or on just on the gestures as their are (using baseline model)
 # N_OUTPUT = how many dimension does encoding have (ignored if we don't encode)
 ```
 
-To encode the dataset use the following [directory](https://github.com/GestureGeneration/motion_representation_learning) and then set ENCODE flag to True.
-
-## 5. Predict gesture
+## 6. Predict gesture
 
 ```sh
 python predict.py MODEL_NAME INPUT_SPEECH_FILE OUTPUT_GESTURE_FILE
@@ -98,11 +117,18 @@ python predict.py MODEL_NAME INPUT_SPEECH_FILE OUTPUT_GESTURE_FILE
 python predict.py model.hdf5 data/test_inputs/X_test_audio1169.npy data/test_inputs/predict_1169_20fps.txt
 ```
 
-This can be used in a for loop over all the test sequences.
+```sh
+# If you used encoded gestures - you need to decode it
+python motion_repr_learning/decode.py DATA_DIR ENCODED_PREDICTION_FILE DECODED_GESTURE_FILE -restore=True -pretrain=False -layer1_width=DIM -chkpt_dir=CHKPT_DIR -batch_size=8 
+```
 
-## 6. Quantitative evaluation
-use scripts in the `evaluation` folder of this directory
 
-## 7. Qualitative evaluation
-use [animation server](https://secret-meadow-14164.herokuapp.com/coordinates.html)
+Note: This can be used in a for loop over all the test sequences. Examples are provided in the 
+`example_scripts` folder of this directory
 
+## 7. Quantitative evaluation
+Use scripts in the `evaluation` folder of this directory
+Examples are provided in the `example_scripts` folder of this directory
+
+## 8. Qualitative evaluation
+Use [animation server](https://secret-meadow-14164.herokuapp.com/coordinates.html)

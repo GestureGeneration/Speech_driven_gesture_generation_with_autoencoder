@@ -1,6 +1,6 @@
 # Motion Representation Learning
 
-This is a repository for learning a compact and informative representation of the human motion sequence.
+This is a folder for learning a compact and informative representation of the human motion sequence.
 
 ## The main idea
 The aim is to learn a better representation of the motion frames using an auto-encoding neural networks, such as Denoising Autoencoder or Variational Autoencoder.
