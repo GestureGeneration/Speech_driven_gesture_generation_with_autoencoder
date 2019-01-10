@@ -36,7 +36,7 @@ N_OUTPUT = 192 * 2  # Number of Gesture Feature (position + velocity)
 if ENCODED:
     N_OUTPUT = int(sys.argv[6])  # Representation dimensionality
 
-N_CONTEXT = 30 + 1  # The number of frames in the context
+N_CONTEXT = 60 + 1  # The number of frames in the context
 
 
 def train(model_file):

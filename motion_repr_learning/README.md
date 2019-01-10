@@ -41,8 +41,4 @@ Where DATA_DIR is a directory where the data is stored, CHKPT_DIR is a directory
 
 
 ## Customizing
-You can play around with the run options, including the neural net size and shape, input corruption, learning rates, etc. in the file flags.py.
-
-## Contact
-
-If you encounter any problems/bugs/issues please contact me on Github or by emailing me at tarask@kth.se for any bug reports/questions/suggestions. I prefer questions and bug reports on Github as that provides visibility to others who might be encountering same issues or who have the same questions.
+You can play around with the run options, including the neural net size and shape, dropout, learning rates, etc. in the file flags.py.

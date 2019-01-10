@@ -34,7 +34,11 @@ sudo apt-get install ffmpeg
 ____________________________________________________________________________________________________________
 &nbsp;
 
-# learning and prediction
+# How to use this repository?
+
+# 0. Notation
+
+We write all the parameters which needs to be specified by a user in the capslock.
 
 ## 1. Download raw data
 
@@ -83,12 +87,12 @@ As a result of running this script
 
 ### Learn dataset encoding
 ```sh
-python motion_repr_learning/learn_dataset_encoding.py DATA_DIR -chkpt_dir=CHKPT_DIR -layer1_width=DIM
+python motion_repr_learning/ae/learn_dataset_encoding.py DATA_DIR -chkpt_dir=CHKPT_DIR -layer1_width=DIM
 ```
 
 ### Encode dataset
 ```sh
-python motion_repr_learning/encode_dataset.py DATA_DIR -chkpt_dir=CHKPT_DIR -restore=True -pretrain=False -layer1_width=DIM
+python motion_repr_learning/ae/encode_dataset.py DATA_DIR -chkpt_dir=CHKPT_DIR -restore=True -pretrain=False -layer1_width=DIM
 ```
 
 More information can be found in the folder `motion_repr_learning` 
@@ -119,7 +123,7 @@ python predict.py model.hdf5 data/test_inputs/X_test_audio1169.npy data/test_inp
 
 ```sh
 # If you used encoded gestures - you need to decode it
-python motion_repr_learning/decode.py DATA_DIR ENCODED_PREDICTION_FILE DECODED_GESTURE_FILE -restore=True -pretrain=False -layer1_width=DIM -chkpt_dir=CHKPT_DIR -batch_size=8 
+python motion_repr_learning/ae/decode.py DATA_DIR ENCODED_PREDICTION_FILE DECODED_GESTURE_FILE -restore=True -pretrain=False -layer1_width=DIM -chkpt_dir=CHKPT_DIR -batch_size=8 
 ```
 
 
@@ -127,8 +131,12 @@ Note: This can be used in a for loop over all the test sequences. Examples are p
 `example_scripts` folder of this directory
 
 ## 7. Quantitative evaluation
-Use scripts in the `evaluation` folder of this directory
-Examples are provided in the `example_scripts` folder of this directory
+Use scripts in the `evaluation` folder of this directory.
+
+Examples are provided in the `example_scripts` folder of this repository
 
 ## 8. Qualitative evaluation
 Use [animation server](https://secret-meadow-14164.herokuapp.com/coordinates.html)
+
+## Contact
+If you encounter any problems/bugs/issues please contact me on Github or by emailing me at tarask@kth.se for any bug reports/questions/suggestions. I prefer questions and bug reports on Github as that provides visibility to others who might be encountering same issues or who have the same questions.

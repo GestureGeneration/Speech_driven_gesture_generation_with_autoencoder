@@ -196,8 +196,6 @@ def learning(data, data_info, just_restore=False):
                 while not coord.should_stop():
                     _, train_error_ = sess.run([train_op, nn._reconstruction_loss], feed_dict={})
 
-                    print(step)
-
                     if step % num_batches == 0:
                         epoch = step * 1.0 / num_batches
 
