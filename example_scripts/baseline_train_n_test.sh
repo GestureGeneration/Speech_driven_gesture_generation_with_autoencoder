@@ -14,15 +14,16 @@ source activate CondaEnvPy3Tf
 features=$1
 gpu=$2
 folder=$3
+data_dir=/home/taras/Documents/storage/MotionJapanese/$folder
+speech_features=MFCC
 
 model=${folder}"BasedModel"
 
 echo "Training "${model}""
-
 START=$(date +%s)
 
 # Train baseline model
-CUDA_VISIBLE_DEVICES=$gpu python ../train.py models/$model.hdf5 100 /home/taras/Documents/storage/MotionJapanese/$folder $features False 0
+CUDA_VISIBLE_DEVICES=$gpu python ../train.py models/$model.hdf5 100 $data_dir $features False 0
 
 Tr_FINISH=$(date +%s)
 
@@ -33,7 +34,7 @@ echo "Testing "${model}" model" >> results.txt
 # Compress and save the results
 archive=${model}Results.tar
 echo "Compressing the results:"
-tar -czvf $archive ../evaluation/data/predicted/pos_vel/*.txt
+tar -czvf $archive ../evaluation/data/predicted/$speech_features/*.txt
 echo "The results were compressed into example_scripts/models/"$archive
 
 END=$(date +%s)

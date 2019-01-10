@@ -13,9 +13,8 @@ fi
 folder=$1
 gpu=$2
 model=$3
-
-# Activate virtual environment (replace by your command)
-source activate CondaEnvPy3Tf
+data_dir=/home/taras/Documents/storage/MotionJapanese/$folder
+speech_features=MFCC
 
 # Create a folder to store produced gesture sequences
 mkdir -p gestures
@@ -23,15 +22,15 @@ mkdir -p gestures
 # Remove previous results
 #(I had two folders evaluation0 and evaluation1, so that I can use two GPUs simultaneously)
 cd ..
-rm evaluation/data/predicted/pos_vel/*
+rm evaluation/data/predicted/$speech_features/*
 
 # Make predictions for all the test sequences
 # (replace 1094 by 1093 for the dev sequences)
-for seq in `seq 1094 2 1182`;
+for seq in `seq 1094 2 1182`; 
         do
 		echo
                 echo 'Predicting sequence' $seq
-                CUDA_VISIBLE_DEVICES=$gpu python predict.py $model.hdf5 /home/taras/Documents/storage/MotionJapanese/$folder/test_inputs/X_test_audio${seq}.npy normal_prediction$seq.txt
+                CUDA_VISIBLE_DEVICES=$gpu python predict.py $model.hdf5 $data_dir/test_inputs/X_test_audio${seq}.npy normal_prediction$seq.txt
                 mv normal_prediction$seq.txt example_scripts/gestures/gesture${seq}.txt	
         done
 
@@ -43,7 +42,8 @@ cd example_scripts/gestures
 rm *.txt
 
 # Move gestrues without velocities to the corresponding folder
-mv no_vel/*.txt ../../evaluation/data/predicted/pos_vel/
+mkdir -p ../../evaluation/data/predicted/$speech_features/
+mv no_vel/*.txt ../../evaluation/data/predicted/$speech_features/
 cd ../../evaluation
 
 # In order for an evaluation to be correct ONLY ground truth motion 3d coords in txt format for the
@@ -52,6 +52,7 @@ cd ../../evaluation
 # see "evaluation" folder for the info on how to transform the true gestures from bvh to txt format
 
 echo 'Evaluating ...'
-python calc_errors.py -g pos_vel -m ape  >> ../results.txt
-python calc_errors.py -g pos_vel -m mae  >> ../results.txt
-python calc_jerk.py -g pos_vel >> ../results.txt
+echo "Evaluating "${model}" ..." >> ../results.txt
+python calc_errors.py -g $speech_features -m ape  >> ../results.txt
+python calc_errors.py -g $speech_features -m mae  >> ../results.txt
+python calc_jerk.py -g $speech_features >> ../results.txt
