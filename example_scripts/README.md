@@ -2,7 +2,9 @@
 
 This directory contain scripts used for in experiments for training and testing different Neural Networks (NN)
 1. Training and testing a baseline gesture generation NN  (baseline_train_n_test.sh)
-3. Training and testing of autoencoder-based gesture generation NN (proposed_train_n_test.sh)
+2. Training and testing of autoencoder-based gesture generation NN (proposed_train_n_test.sh)
+
+Note: prior to using this scripts a user needs to download and preprocess dataset, as described in the root folder
 
 ### Baseline model
 

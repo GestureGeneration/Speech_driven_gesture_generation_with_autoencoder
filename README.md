@@ -1,13 +1,14 @@
 # Speech Driven Gesture Generation With Autoencoder
 This repository contains Keras implementation of the speech-driven gesture generation by a neural network. 
 
-# requirements
+# Requirements
 
-- python 3
-- sox
+- Python 3
+- Tensorflow >= 1.0
+- Sox
 
 
-# initial setup
+# Initial setup
 
 ### install packages
 ```sh
@@ -23,7 +24,7 @@ brew install ffmpeg
 ```
 
 ```
-# Ubuntu
+# ubuntu
 sudo add-apt-repository ppa:jonathonf/ffmpeg-4
 sudo apt-get update
 sudo apt-get install ffmpeg
@@ -56,6 +57,10 @@ python data_processing/prepare_data.py DATA_DIR
 # DATA_DIR = directory to save data such as 'data/'
 ```
 
+Note: DATA_DIR is not a directory where the raw data is stored (the folder with data, "dataset" , has to be stored in the root folder of this repo). DATA_DIR is the directory where the postprocessed data should be saved. After this step you don't need to have "dataset" in the root folder any more. 
+You should use the same DATA_DIR in all the following scripts.
+
+After this command:
 - `train/` `test/` `dev/` are created under `DATA_DIR/`  
   - in `inputs/` inside each directory, audio(id).wav files are stored  
   - in `labels/` inside each directory, gesture(id).bvh files are stored  

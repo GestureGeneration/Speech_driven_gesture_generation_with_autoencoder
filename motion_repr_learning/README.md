@@ -12,14 +12,6 @@ Once a motion encoder MotionE and a motion decoder MotionD are learned, we train
 
 At test time, the speech encoder and the motion decoder networks are combined: SpeechE predicts motion representations based on a given speech signal and MotionD then decodes these representations to produce motion sequences.
 
-## Requirements
-- Python 3
-- Tensorflow >= 1.0
-- Additional Python libraries:
-  - numpy
-  - matplotlib (if you want to visualize the results)
-  - btk (if you want to preprocess motion test sequences by yourself)
-
 ## Data preparation
 
 1. Follow the instruction on data preparation at the root folder of this repository.

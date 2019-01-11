@@ -1,0 +1,13 @@
+keras
+pandas
+numpy
+scipy
+scikit-learn
+matplotlib
+h5py
+pyquaternion
+python_speech_features
+pydub
+pysptk
+librosa
+pyreaper
