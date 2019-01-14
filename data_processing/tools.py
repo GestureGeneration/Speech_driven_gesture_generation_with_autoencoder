@@ -15,7 +15,7 @@ import scipy.io.wavfile as wav
 import librosa
 import librosa.display
 import pyreaper
-
+import ctypes
 
 def create_bvh(filename, prediction, frame_time):
     """
@@ -132,6 +132,10 @@ def calculate_pitch(audio_filename):
 
     fs, audio = wav.read(audio_filename)
 
+    # Make stereo audio being mono
+    if len(audio.shape) == 2:
+        audio =( (audio[:, 0] + audio[:, 1]) / 2 ).astype(ctypes.c_int16)
+
     plot = False
 
     WINDOW_LENGTH = 5
@@ -236,6 +240,9 @@ def calculate_spectrogram(audio_filename):
     DIM = 64
 
     fs, audio = wav.read(audio_filename)
+    # Make stereo audio being mono
+    if len(audio.shape) == 2:
+        audio = (audio[:, 0] + audio[:, 1]) / 2
 
     spectr = librosa.feature.melspectrogram(audio, sr=fs, hop_length=44*WINDOW_LENGTH,
                                             fmax=8000, fmin=20, n_mels=DIM)
