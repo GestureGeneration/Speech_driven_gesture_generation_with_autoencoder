@@ -4,7 +4,6 @@ This repository contains Keras implementation of the speech-driven gesture gener
 # Requirements
 
 - Python 3
-- Tensorflow >= 1.0
 - Sox
 
 
@@ -12,8 +11,8 @@ This repository contains Keras implementation of the speech-driven gesture gener
 
 ### install packages
 ```sh
-pip install tensorflow-gpu
-# pip install tensorflow
+pip install tensorflow-gpu # if you have GPU
+# pip install tensorflow  #if you don't have GPU
 pip install -r requirements.txt
 ```
 
@@ -143,5 +142,6 @@ Examples are provided in the `example_scripts` folder of this repository
 ## 8. Qualitative evaluation
 Use [animation server](https://secret-meadow-14164.herokuapp.com/coordinates.html)
 
+&nbsp;
 ## Contact
 If you encounter any problems/bugs/issues please contact me on Github or by emailing me at tarask@kth.se for any bug reports/questions/suggestions. I prefer questions and bug reports on Github as that provides visibility to others who might be encountering same issues or who have the same questions.
