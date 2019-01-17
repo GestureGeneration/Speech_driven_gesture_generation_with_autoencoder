@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from pydub import AudioSegment
 import pandas as pd
 import scipy.io as sio
+from alt_prosody import compute_prosody
 
 # Acoustic signal processing
 import scipy.io.wavfile as wav
@@ -16,6 +17,10 @@ import librosa
 import librosa.display
 import pyreaper
 import ctypes
+from python_speech_features import mfcc
+
+MFCC_INPUTS=26 # How many features we will store for each MFCC vector
+
 
 def create_bvh(filename, prediction, frame_time):
     """
@@ -51,7 +56,6 @@ def create_bvh(filename, prediction, frame_time):
             fo.write(label_line + '\n')
         print("bvh generated")
 
-
 def shorten(arr1, arr2):
     min_len = min(len(arr1), len(arr2))
 
@@ -72,6 +76,30 @@ def average(arr, n):
     end = n * int(len(arr)/n)
     return np.mean(arr[:end].reshape(-1, n), 1)
 
+
+def calculate_mfcc(audio_filename):
+    """
+    Calculate MFCC features for the audio in a given file
+    Args:
+        audio_filename: file name of the audio
+
+    Returns:
+        feature_vectors: MFCC feature vector for the given audio file
+    """
+    fs, audio = wav.read(audio_filename)
+
+    # Make stereo audio being mono
+    if len(audio.shape) == 2:
+        audio = (audio[:, 0] + audio[:, 1]) / 2
+
+    # Calculate MFCC feature with the window frame it was designed for
+    input_vectors = mfcc(audio, winlen=0.02, winstep=0.01, samplerate=fs, numcep=MFCC_INPUTS)
+
+    input_vectors = [average(input_vectors[:, i], 5) for i in range(MFCC_INPUTS)]
+
+    feature_vectors = np.transpose(input_vectors)
+
+    return feature_vectors
 
 def get_energy_level(sound, win_len):
     """ Calculate energy signal of an audio object
@@ -195,13 +223,13 @@ def extract_prosodic_features(audio_filename):
     # Read audio from file
     sound = AudioSegment.from_file(audio_filename, format="wav")
 
+    # Alternative prosodic features
+    pitch, energy = compute_prosody(audio_filename, WINDOW_LENGTH / 1000)
+
     duration = len(sound) / 1000
     t = np.arange(0, duration, WINDOW_LENGTH / 1000)
 
-    energy = get_energy_level(sound, WINDOW_LENGTH)
     energy_der = derivative(t, energy)
-
-    pitch, pitch_ind = calculate_pitch(audio_filename)
     pitch_der = derivative(t, pitch)
 
     # Average everything in order to match the frequency
@@ -209,18 +237,16 @@ def extract_prosodic_features(audio_filename):
     energy_der = average(energy_der, 10)
     pitch = average(pitch, 10)
     pitch_der = average(pitch_der, 10)
-    pitch_ind = average(pitch_ind, 10)
 
     # Cut them to the same size
     min_size = min(len(energy), len(energy_der), len(pitch_der), len(pitch_der))
     energy = energy[:min_size]
     energy_der = energy_der[:min_size]
     pitch = pitch[:min_size]
-    pitch_ind = pitch_ind[:min_size]
     pitch_der = pitch_der[:min_size]
 
     # Stack them all together
-    pros_feature = np.stack((energy, energy_der, pitch, pitch_der, pitch_ind))
+    pros_feature = np.stack((energy, energy_der, pitch, pitch_der))#, pitch_ind))
 
     # And reshape
     pros_feature = np.transpose(pros_feature)

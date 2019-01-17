@@ -11,53 +11,25 @@ import numpy as np
 import scipy.io.wavfile as wav
 import pyquaternion as pyq
 
-from python_speech_features import mfcc
-
-from tools import average, extract_prosodic_features, shorten, calculate_spectrogram
+from tools import *
+from alt_prosody import compute_prosody
 
 N_OUTPUT = 192 * 2 # Number of gesture features (position)
 DATA_DIR = ''
 N_CONTEXT = 0  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
 WINDOW_LENGTH = 50 # in miliseconds
-FEATURES = "MFCC"
+FEATURES = "MFCC+Pros"
 
 if FEATURES == "MFCC":
     N_INPUT = 26 # Number of MFCC features
 if FEATURES == "Pros":
-    N_INPUT = 5 # Number of prosodic features
+    N_INPUT = 4 # Number of prosodic features
 if FEATURES == "MFCC+Pros":
-    N_INPUT = 31 # Total number of features
+    N_INPUT = 30 # Total number of features
 if FEATURES == "Spectro":
     N_INPUT = 64 # Number of spectrogram features
 if FEATURES == "Spectro+Pros":
-    N_INPUT = 69  # Total number of eatures
-
-MFCC_INPUTS=26 # How many features we will store for each MFCC vector
-
-
-def calculate_mfcc(audio_filename):
-    """
-    Calculate MFCC features for the audio in a given file
-    Args:
-        audio_filename: file name of the audio
-
-    Returns:
-        feature_vectors: MFCC feature vector for the given audio file
-    """
-    fs, audio = wav.read(audio_filename)
-
-    # Make stereo audio being mono
-    if len(audio.shape) == 2:
-        audio = (audio[:, 0] + audio[:, 1]) / 2
-
-    # Calculate MFCC feature with the window frame it was designed for
-    input_vectors = mfcc(audio, winlen=0.02, winstep=0.01, samplerate=fs, numcep=MFCC_INPUTS)
-
-    input_vectors = [average(input_vectors[:, i], 5) for i in range(MFCC_INPUTS)]
-
-    feature_vectors = np.transpose(input_vectors)
-
-    return feature_vectors
+    N_INPUT = 68  # Total number of eatures
 
 
 def pad_sequence(input_vectors):
@@ -84,7 +56,7 @@ def pad_sequence(input_vectors):
 
         # Pad sequence with zeros
 
-        prosodic_empty_vector =[0, 0, 0, 0, 0]
+        prosodic_empty_vector =[0, 0, 0, 0]
 
         empty_vectors = np.array([prosodic_empty_vector] * int(N_CONTEXT / 2))
 
@@ -93,7 +65,7 @@ def pad_sequence(input_vectors):
         silence_vectors = calculate_mfcc("data_processing/silence.wav")
         mfcc_empty_vector = silence_vectors[0]
 
-        prosodic_empty_vector = [0, 0, 0, 0, 0]
+        prosodic_empty_vector = [0, 0, 0, 0]
 
         combined_empty_vector = np.concatenate((mfcc_empty_vector, prosodic_empty_vector))
 
@@ -111,7 +83,7 @@ def pad_sequence(input_vectors):
         silence_spectro = calculate_spectrogram("data_processing/silence.wav")
         spectro_empty_vector = silence_spectro[0]
 
-        prosodic_empty_vector = [0, 0, 0, 0, 0]
+        prosodic_empty_vector = [0, 0, 0, 0]
 
         combined_empty_vector = np.concatenate((spectro_empty_vector, prosodic_empty_vector))
 
@@ -123,7 +95,6 @@ def pad_sequence(input_vectors):
     new_input_vectors = np.append(new_input_vectors, empty_vectors, axis=0)
 
     return new_input_vectors
-
 
 def create_vectors(audio_filename, gesture_filename, nodes):
     """
