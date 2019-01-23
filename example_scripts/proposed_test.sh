@@ -2,26 +2,17 @@
 
 # This script is used in "proposed_train_n_test.sh" to evaluate the proposed model
 # You call use it by itself if the model is already trained
-# Several aspects needs to be customized
+# Several aspects needs to be customized at config.txt
 
+# Read the parameters for the scripts
+source config.txt
 
-# First - check if we have enough parameters
-if [[ $# -lt 3 ]]; then
-    echo 'Usage: ./proposed_test.sh ENC_DIM FOLDER GPU_NUMBER MODEL'
-    exit 0
-fi
-
-dim=$1
-folder=$2
-gpu=$3
-model=$4
-speech_features=MFCC
+model=example_scripts/models/${folder}"Based"${dim}"DimModel"
 
 # Create a folder to store produced gesture sequences
 mkdir -p gestures
 
 # Remove previous results
-#(I had two folders evaluation0 and evaluation1, so that I can use two GPUs simultaneously)
 cd ..
 rm evaluation/data/predicted/$speech_features/*
 
@@ -36,7 +27,7 @@ for seq in `seq 1094 2 1182`;
                 mv enc_${dim}_prediction$seq.txt motion_repr_learning/ae/
                 cd motion_repr_learning/ae/
                 # Step2: Decode representation into motion
-                CUDA_VISIBLE_DEVICES=$GPU python decode.py /home/taras/Documents/storage/MotionJapanese/TheLAtest enc_${dim}_prediction${seq}.txt ../../example_scripts/gestures/gesture${seq}.txt -restore=True -pretrain=False -layer1_width=$dim -chkpt_dir='/home/taras/tmp/MoCap/'$1 -batch_size=8
+                CUDA_VISIBLE_DEVICES=$GPU python decode.py /home/taras/Documents/storage/MotionJapanese/TheLAtest enc_${dim}_prediction${seq}.txt ../../example_scripts/gestures/gesture${seq}.txt -restore=True -pretrain=False -layer1_width=$dim -chkpt_dir='/home/taras/tmp/MoCap/'$dim -batch_size=8
                 # Remove encoded prediction
                 rm enc_${dim}_pred*
                 cd ../..
@@ -64,4 +55,5 @@ echo "Evaluating "${model}" ..." >> ../results.txt
 python calc_errors.py -g $speech_features -m ape  >> ../results.txt
 python calc_errors.py -g $speech_features -m mae  >> ../results.txt
 python calc_jerk.py -g $speech_features >> ../results.txt
+python calc_jerk.py -g $speech_features -m acceleration >> ../results.txt
 # Where to store the results can be customized

@@ -88,7 +88,7 @@ def _download_datasets(data_dir):
 
     # data augmentation
     if AUGMENT:
-        os.system('../scripts/add_noisy_data.sh {0} {1} {2} {3}'.format("train", FIRST_DATA_ID, LAST_DATA_ID, data_dir))
+        os.system('./data_processing/add_noisy_data.sh {0} {1} {2} {3}'.format("train", FIRST_DATA_ID, LAST_DATA_ID-NUM_OF_TEST, data_dir))
 
     extracted_dir = path.join(data_dir)
 

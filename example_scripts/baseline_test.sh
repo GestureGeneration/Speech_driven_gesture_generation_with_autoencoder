@@ -4,23 +4,15 @@
 # You call use it by itself if the model is already trained
 # Several aspects needs to be customized
 
-# First - check if we have enough parameters
-if [[ $# -lt 3 ]]; then
-    echo 'Usage: ./baseline_test.sh FOLDER GPU_NUMBER MODEL'
-    exit 0
-fi
+# Read parameters
+source config.txt
 
-folder=$1
-gpu=$2
-model=$3
-data_dir=/home/taras/Documents/storage/MotionJapanese/$folder
-speech_features=MFCC
+model=example_scripts/models/${folder}"BasedModel"
 
 # Create a folder to store produced gesture sequences
 mkdir -p gestures
 
 # Remove previous results
-#(I had two folders evaluation0 and evaluation1, so that I can use two GPUs simultaneously)
 cd ..
 rm evaluation/data/predicted/$speech_features/*
 
@@ -55,4 +47,5 @@ echo 'Evaluating ...'
 echo "Evaluating "${model}" ..." >> ../results.txt
 python calc_errors.py -g $speech_features -m ape  >> ../results.txt
 python calc_errors.py -g $speech_features -m mae  >> ../results.txt
+python calc_jerk.py -g $speech_features -m acceleration >> ../results.txt
 python calc_jerk.py -g $speech_features >> ../results.txt

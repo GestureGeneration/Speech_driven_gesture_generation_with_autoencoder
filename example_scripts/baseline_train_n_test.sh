@@ -1,41 +1,33 @@
 #!/usr/bin/env bash
 
 # This script can be used to train a speech-gesture neural network
-# You might need to customize it
+# You might need to customize it using config.txt file
 
-# First - check if we have enough parameters
-if [[ $# -lt 3 ]]; then
-    echo 'Usage: ./baseline_train_n_test.sh NUMB_OF_INPUT_FEATURES GPU_NUMBER FOLDER'
-    exit 0
-fi
-
+# (Optional) Activate your virtual env
 source activate CondaEnvPy3Tf
 
-features=$1
-gpu=$2
-folder=$3
-data_dir=/home/taras/Documents/storage/MotionJapanese/$folder
-speech_features=MFCC
+# Read the parameters for the scripts
+source config.txt
 
 model=${folder}"BasedModel"
 
-echo "Training "${model}""
+echo "Training "${model}" on the ${folder} folder"
 START=$(date +%s)
 
 # Train baseline model
-CUDA_VISIBLE_DEVICES=$gpu python ../train.py models/$model.hdf5 100 $data_dir $features False 0
+CUDA_VISIBLE_DEVICES=$gpu python ../train.py models/$model.hdf5 100 $data_dir $numb_in_features False
 
 Tr_FINISH=$(date +%s)
 
 # Evaluate the model
-echo "Testing "${model}" model" >> results.txt
-./baseline_test.sh $folder $gpu example_scripts/models/$model
+echo "Testing "${model}" model" >> ../results.txt
+./baseline_test.sh
 
 # Compress and save the results
 archive=${model}Results.tar
 echo "Compressing the results:"
 tar -czvf $archive ../evaluation/data/predicted/$speech_features/*.txt
-echo "The results were compressed into example_scripts/models/"$archive
+echo "The results were compressed into example_scripts/"$archive
 
 END=$(date +%s)
 DIFF=$(( $END - $START ))
