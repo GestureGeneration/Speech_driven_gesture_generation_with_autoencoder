@@ -22,13 +22,13 @@ from matplotlib import pyplot
 # Check if script get enough parameters
 if len(sys.argv) < 6:
         raise ValueError(
-           'Not enough paramters! \nUsage : python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE (N_OUTPUT)')
+           'Not enough paramters! \nUsage : python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE (DIM)')
 ENCODED = sys.argv[5].lower() == 'true'
 
 if ENCODED:
     if len(sys.argv) < 7:
         raise ValueError(
-           'Not enough paramters! \nUsage : python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE N_OUTPUT')
+           'Not enough paramters! \nUsage : python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE DIM')
     else:    
         N_OUTPUT = int(sys.argv[6])  # Representation dimensionality
 else:

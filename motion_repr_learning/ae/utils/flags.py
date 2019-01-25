@@ -7,6 +7,7 @@ from os.path import join as pjoin
 
 import tensorflow as tf
 
+# Modify this function to set your home directory for this repo
 def home_out(path):
     return pjoin(os.environ['HOME'], 'tmp', 'MoCap', path)
 
@@ -38,7 +39,7 @@ flags.DEFINE_float('dropout', 0.9, 'Probability to keep the neuron on')
 flags.DEFINE_integer('batch_size', 128,
                      'Size of the mini batch')
 
-flags.DEFINE_integer('training_epochs', 22,
+flags.DEFINE_integer('training_epochs', 20,
                      "Number of training epochs for pretraining layers")
 flags.DEFINE_integer('pretraining_epochs', 5,
                      "Number of training epochs for pretraining layers")
@@ -63,17 +64,6 @@ flags.DEFINE_integer('layer3_width', 312, 'Number of units in each hidden layer 
 #                           Constants
 
 flags.DEFINE_integer('seed', 123456, 'Random seed')
-
-
-flags.DEFINE_string('data_dir', #'/home/taras/Documents/storage/MotionJapanese/binary',
-                    '/home/taras/Documents/Datasets/MoCap/C3d/Preprocessed/30k_90L',
-                    'Directory to put the training data.')
-
-flags.DEFINE_string('model_dir', '/home/taras/storage/MoCap/models',
-                    'Directory to put the summary data')
-
-flags.DEFINE_string('params_file', '/home/taras/storage/MoCap/params',
-                    'File for saving the parameters values')
 
 flags.DEFINE_string('summary_dir', home_out('summaries_exp'),
                     'Directory to put the summary data')

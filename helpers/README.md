@@ -12,7 +12,7 @@ This directory provides data handling scripts for our gesture generation framewo
 (Can be applied as postprocessing. Were not used in the experiments from the paper)
 
 ## Data preparation 
-  1. Run `../predict.py` to predict gestures from speech audio as described in the "gesgen_keras" folder.
+  1. Run `../predict.py` to predict gestures from speech audio as described in the root folder.
   2. Put the predicted gestures (e.g. `predict_1094.txt, ...`) into a directory, say, `your_prediction_dir/`.
 
 ### Velocity remover

@@ -80,20 +80,25 @@ Note: if you change the N_CONTEXT value - you need to update it in the `train.py
 
 As a result of running this script
 - numpy binary files `X_train.npy`, `Y_train.npy` (vectord dataset) are created under `DATA_DIR`
-- under `DATA_DIR/test_inputs/` , test audios, such as `X_test_audio1169.npy` , are created  
+- under `DATA_DIR/test_inputs/` , test audios, such as `X_test_audio1168.npy` , are created
 - when N_CONTEXT = 60, the audio vector's shape is (num of timesteps, 61, 26) 
 - gesture vector's shape is（num of timesteps, 384)
   - 384 = 64joints × (x,y,z positions + x,y,z velocities)
 
+**If you don't want to customize anything - you can skip reading about steps 4-7 and just use already prepared scripts at the folder `example_scripts`**
 
 ## 4. (Optional) Learn motion representation by AutoEncoder
 
-### Learn dataset encoding
+Create a directory to save training checkpoints such as `chkpt/` and use it as CHKPT_DIR parameter.
+#### Learn dataset encoding
 ```sh
 python motion_repr_learning/ae/learn_dataset_encoding.py DATA_DIR -chkpt_dir=CHKPT_DIR -layer1_width=DIM
 ```
 
-### Encode dataset
+The optimal dimensionality (DIM) in our experiment was 325
+
+#### Encode dataset
+Create DATA_DIR/DIM directory
 ```sh
 python motion_repr_learning/ae/encode_dataset.py DATA_DIR -chkpt_dir=CHKPT_DIR -restore=True -pretrain=False -layer1_width=DIM
 ```
@@ -104,13 +109,13 @@ More information can be found in the folder `motion_repr_learning`
 ## 5. Learn speech-driven gesture generation model
 
 ```sh
-python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE N_OUTPUT
+python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE DIM
 # MODEL_NAME = hdf5 file name such as 'model_500ep_posvel_60.hdf5'
 # EPOCHS = how many epochs do we want to train the model (recommended - 100)
 # DATA_DIR = directory with the data (should be same as above)
 # N_INPUT = how many dimension does speech data have (default - 26)
 # ENCODE = weather we train on the encoded gestures (using proposed model) or on just on the gestures as their are (using baseline model)
-# N_OUTPUT = how many dimension does encoding have (ignored if we don't encode)
+# DIM = how many dimension does encoding have (ignored if you don't encode)
 ```
 
 ## 6. Predict gesture
@@ -121,7 +126,7 @@ python predict.py MODEL_NAME INPUT_SPEECH_FILE OUTPUT_GESTURE_FILE
 
 ```sh
 # Usage example
-python predict.py model.hdf5 data/test_inputs/X_test_audio1169.npy data/test_inputs/predict_1169_20fps.txt
+python predict.py model.hdf5 data/test_inputs/X_test_audio1168.npy data/test_inputs/predict_1168_20fps.txt
 ```
 
 ```sh
