@@ -63,7 +63,6 @@ After this command:
 - `train/` `test/` `dev/` are created under `DATA_DIR/`  
   - in `inputs/` inside each directory, audio(id).wav files are stored  
   - in `labels/` inside each directory, gesture(id).bvh files are stored  
-- `train/` directory has noised audio files named naudio(id).wav
 - under `DATA_DIR/`,  three csv files `gg-train.csv` `gg-test.csv` `gg-dev.csv` are created and these files have paths to actual data
 
 
@@ -71,7 +70,7 @@ After this command:
 
 ```sh
 python data_processing/create_vector.py DATA_DIR N_CONTEXT
-# N_CONTEXT = number of context, by default '60'
+# N_CONTEXT = number of context, in our experiments was set to '60'
 # (this means 30 steps backwards and forwards)
 ```
 

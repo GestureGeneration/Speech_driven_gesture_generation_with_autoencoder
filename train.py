@@ -20,21 +20,27 @@ matplotlib.use('Agg')
 from matplotlib import pyplot
 
 # Check if script get enough parameters
-if len(sys.argv) < 7:
-    raise ValueError(
-        'Not enough paramters! \nUsage : python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE N_OUTPUT')
+if len(sys.argv) < 6:
+        raise ValueError(
+           'Not enough paramters! \nUsage : python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE (N_OUTPUT)')
+ENCODED = sys.argv[5].lower() == 'true'
+
+if ENCODED:
+    if len(sys.argv) < 7:
+        raise ValueError(
+           'Not enough paramters! \nUsage : python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE N_OUTPUT')
+    else:    
+        N_OUTPUT = int(sys.argv[6])  # Representation dimensionality
+else:
+    N_OUTPUT = 192 * 2  # Number of Gesture Feature (position + velocity)
+
 
 EPOCHS = int(sys.argv[2])
 DATA_DIR = sys.argv[3]
 N_INPUT = int(sys.argv[4])  # Number of input features
-ENCODED = sys.argv[5].lower() == 'true'
 
 BATCH_SIZE = 2056
 N_HIDDEN = 256
-N_OUTPUT = 192 * 2  # Number of Gesture Feature (position + velocity)
-
-if ENCODED:
-    N_OUTPUT = int(sys.argv[6])  # Representation dimensionality
 
 N_CONTEXT = 60 + 1  # The number of frames in the context
 

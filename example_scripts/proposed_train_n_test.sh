@@ -2,20 +2,13 @@
 
 # This script contain both training and testing
 # of the autoencoder based gesture generation neural network
-# You might need to customize it
+# You might need to customize it using config.txt file
 
-# First - check if we have enough parameters
-if [[ $# -lt 4 ]]; then
-    echo 'Usage: ./proposed_train_n_test.sh ENC_DIM GPU_NUMBER FOLDER NUMB_OF_INPUT_FEATURES'
-    exit 0
-fi
+# (Optional) Activate your virtual env
+source activate CondaEnvPy3Tf
 
-dim=$1
-gpu=$2
-folder=$3
-in_features=$4
-speech_features=MFCC
-data_dir=/home/taras/Documents/storage/MotionJapanese/$folder/
+# Read the parameters for the scripts
+source config.txt
 
 model=${folder}"Based"${dim}"DimModel"
 
@@ -30,7 +23,7 @@ cd ../motion_repr_learning/ae/
 mkdir -p $data_dir/325
 
 # Learn dataset encoding
-#CUDA_VISIBLE_DEVICES=$gpu python learn_dataset_encoding.py $data_dir -chkpt_dir='/home/taras/tmp/MoCap/'$dim -layer1_width=$dim
+CUDA_VISIBLE_DEVICES=$gpu python learn_dataset_encoding.py $data_dir -chkpt_dir='/home/taras/tmp/MoCap/'$dim -layer1_width=$dim
 
 #Encode dataset
 echo "Encoding the dataset"
@@ -44,12 +37,12 @@ cd ../../example_scripts
 Tr_START=$(date +%s)
 
 # Train model on the reprentation
-CUDA_VISIBLE_DEVICES=$gpu python ../train.py models/$model.hdf5 100 $data_dir $in_features True $dim
+CUDA_VISIBLE_DEVICES=$gpu python ../train.py models/$model.hdf5 100 $data_dir $numb_in_features True $dim
 
 Tr_FINISH=$(date +%s)
 
 # Evaluate the model
-./proposed_test.sh $dim $folder $gpu example_scripts/models/$model
+./proposed_test.sh 
 
 # Compress and save the results
 archive=${model}Results.tar

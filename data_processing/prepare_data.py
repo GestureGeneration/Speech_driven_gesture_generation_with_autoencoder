@@ -15,7 +15,7 @@ NUM_OF_TEST = 90
 FIRST_DATA_ID = 20
 LAST_DATA_ID = 1182
 
-AUGMENT = False
+AUGMENT = True
 
 
 def _split_and_format_data(data_dir):
@@ -88,7 +88,7 @@ def _download_datasets(data_dir):
 
     # data augmentation
     if AUGMENT:
-        os.system('../scripts/add_noisy_data.sh {0} {1} {2} {3}'.format("train", FIRST_DATA_ID, LAST_DATA_ID, data_dir))
+        os.system('./data_processing/add_noisy_data.sh {0} {1} {2} {3}'.format("train", FIRST_DATA_ID, LAST_DATA_ID-NUM_OF_TEST, data_dir))
 
     extracted_dir = path.join(data_dir)
 
