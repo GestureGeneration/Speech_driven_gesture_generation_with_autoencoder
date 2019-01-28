@@ -265,13 +265,6 @@ def learning(data, data_info, just_restore=False):
 
         print("The training was running for %.3f  min" % (duration))
 
-        # Save the results
-        f = open(fl.FLAGS.results_file, 'a')
-        f.write('\nNN For the data from ' + str(fl.FLAGS.data_dir) + ' and LR: ' +
-                str(fl.FLAGS.learning_rate) + ' has in test error: ' +
-                str.format("{0:.5f}", np.sqrt(new_error)))
-        f.close()
-
         return nn
 
 ###############################################
