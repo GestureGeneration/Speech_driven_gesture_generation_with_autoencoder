@@ -27,7 +27,7 @@ for seq in `seq 1094 2 1182`;
                 mv enc_${dim}_prediction$seq.txt motion_repr_learning/ae/
                 cd motion_repr_learning/ae/
                 # Step2: Decode representation into motion
-                CUDA_VISIBLE_DEVICES=$GPU python decode.py /home/taras/Documents/storage/MotionJapanese/TheLAtest enc_${dim}_prediction${seq}.txt ../../example_scripts/gestures/gesture${seq}.txt -restore=True -pretrain=False -layer1_width=$dim -chkpt_dir='/home/taras/tmp/MoCap/'$dim -batch_size=8
+                CUDA_VISIBLE_DEVICES=$GPU python decode.py /home/taras/Documents/storage/MotionJapanese/$folder enc_${dim}_prediction${seq}.txt ../../example_scripts/gestures/gesture${seq}.txt -restore=True -pretrain=False -layer1_width=$dim -chkpt_dir='/home/taras/tmp/MoCap/'$dim -batch_size=8
                 # Remove encoded prediction
                 rm enc_${dim}_pred*
                 cd ../..
