@@ -6,6 +6,7 @@ It should be used before training, as described in the README.md
 
 import sys
 import os
+import os.path
 import pandas as pd
 import numpy as np
 import scipy.io.wavfile as wav
@@ -15,11 +16,11 @@ from tools import *
 from alt_prosody import compute_prosody
 from bvh_read.BVH import load
 
-N_OUTPUT = 153 # Number of gesture features (position)
+N_OUTPUT = 168 # Number of gesture features (position)
 DATA_DIR = ''
 N_CONTEXT = 0  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
 WINDOW_LENGTH = 50 # in miliseconds
-FEATURES = "MFCC+Pros"
+FEATURES = "MFCC"
 
 if FEATURES == "MFCC":
     N_INPUT = 26 # Number of MFCC features
@@ -31,6 +32,14 @@ if FEATURES == "Spectro":
     N_INPUT = 64 # Number of spectrogram features
 if FEATURES == "Spectro+Pros":
     N_INPUT = 68  # Total number of eatures
+
+# Set silence adress
+if os.path.isfile("data_processing/silence.wav"):
+    SILENCE_PATH = "data_processing/silence.wav"
+elif os.path.isfile("silence.wav"):
+    SILENCE_PATH = "silence.wav"
+else:
+    raise("Could not find a file with the silence !!! Make sure it exists and is in ' Data processing' folder")
 
 
 def pad_sequence(input_vectors):
@@ -48,7 +57,7 @@ def pad_sequence(input_vectors):
 
         # Pad sequence not with zeros but with MFCC of the silence
 
-        silence_vectors = calculate_mfcc("data_processing/silence.wav")
+        silence_vectors = calculate_mfcc(SILENCE_PATH)
         mfcc_empty_vector = silence_vectors[0]
 
         empty_vectors = np.array([mfcc_empty_vector] * int(N_CONTEXT / 2))
@@ -63,7 +72,7 @@ def pad_sequence(input_vectors):
 
     if FEATURES == "MFCC+Pros":
 
-        silence_vectors = calculate_mfcc("data_processing/silence.wav") #
+        silence_vectors = calculate_mfcc(SILENCE_PATH) #
         mfcc_empty_vector = silence_vectors[0]
 
         prosodic_empty_vector = [0, 0, 0, 0]
@@ -74,14 +83,14 @@ def pad_sequence(input_vectors):
 
     if FEATURES == "Spectro":
 
-        silence_spectro = calculate_spectrogram("data_processing/silence.wav")
+        silence_spectro = calculate_spectrogram(SILENCE_PATH)
         spectro_empty_vector = silence_spectro[0]
 
         empty_vectors = np.array([spectro_empty_vector] * int(N_CONTEXT / 2))
 
     if FEATURES == "Spectro+Pros":
 
-        silence_spectro = calculate_spectrogram("data_processing/silence.wav")
+        silence_spectro = calculate_spectrogram(SILENCE_PATH)
         spectro_empty_vector = silence_spectro[0]
 
         prosodic_empty_vector = [0, 0, 0, 0]
@@ -104,7 +113,6 @@ def create_vectors(audio_filename, gesture_filename):
     Args:
         audio_filename:    file name for an audio file (.wav)
         gesture_filename:  file name for a motion file (.bvh)
-        nodes:             an array of markers for the motion
 
     Returns:
         input_with_context   : speech features
@@ -149,15 +157,6 @@ def create_vectors(audio_filename, gesture_filename):
 
     output_vectors = list(animation.positions)
 
-    # if data is 100fps, cut it to 20 fps (every fifth line)
-    # if data is approx 24fps, cut it to 20 fps (del every sixth line)
-    if frametime == 0.0416667:
-        del output_vectors[::6]
-    elif frametime == 0.010000:
-        org = output_vectors[::5]
-    else:
-        print("smth wrong with fps of " + gesture_filename)
-
     # Step 3: Align vector length
     input_vectors, output_vectors = shorten(input_vectors, output_vectors)
 
@@ -185,7 +184,6 @@ def create(name):
     Create a dataset
     Args:
         name:  dataset: 'train' or 'test' or 'dev
-        nodes: markers used in motion caption
 
     Returns:
         nothing: saves numpy arrays of the features and labels as .npy files
@@ -222,7 +220,6 @@ def create_test_sequences(dataset):
     """
     Create test sequences
     Args:
-        nodes:    markers used in motion caption
         dataset:  dataset name ('train', 'test' or 'dev')
 
     Returns:
@@ -232,7 +229,7 @@ def create_test_sequences(dataset):
     DATA_FILE = pd.read_csv(DATA_DIR + '/gg-'+dataset+'.csv')
 
     for i in range(len(DATA_FILE)):
-        input_vectors, output_vectors = create_vectors(DATA_FILE['wav_filename'][i], DATA_FILE['bvh_filename'][i], nodes)
+        input_vectors, output_vectors = create_vectors(DATA_FILE['wav_filename'][i], DATA_FILE['bvh_filename'][i])
 
         array = DATA_FILE['wav_filename'][i].split("/")
         name = array[len(array)-1].split(".")[0]
@@ -262,7 +259,12 @@ if __name__ == "__main__":
     DATA_DIR = sys.argv[1]
     N_CONTEXT = int(sys.argv[2])
 
+    print("Creating datasets...")
+
+    create_test_sequences('test')
+
+    create('train')
     create('test')
     create('dev')
-    create('train')
-    create_test_sequences('test')
+
+    print("Datasets are created!")

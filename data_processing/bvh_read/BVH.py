@@ -287,7 +287,9 @@ def save_joint(f, anim, names, t, i, order='zyx', positions=False):
 
 if __name__ == "__main__":
 
-    file_name = "/home/taras/Desktop/Work/Code/Git/BeeVeeH/tests/bvh_files/0007_Cartwheel001.bvh"
+    file_name = "/home/taras/Documents/Datasets/SpeechToMotion/Irish/BVHs/NaturalTalking_026.bvh"
+	#"/home/taras/Documents/Datasets/SpeechToMotion/Irish/BVHs/NaturalTalking_005.bvh"
     animation, joint_names, frametime = load(file_name)
-    animation = animation[:101]
-    save("Temp.bvh",animation, joint_names, frametime)
+    print(frametime)
+    animation = animation[1449:65364]
+    save("/home/taras/Documents/Datasets/SpeechToMotion/Irish/Cropped BVHs/Motion_26.bvh",animation, joint_names, frametime)
