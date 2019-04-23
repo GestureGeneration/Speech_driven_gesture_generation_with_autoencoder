@@ -4,6 +4,9 @@
 import re
 import numpy as np
 
+import sys
+sys.path.append("data_processing/bvh_read")
+
 from Animation import Animation
 from Quaternions import Quaternions
 
@@ -287,9 +290,16 @@ def save_joint(f, anim, names, t, i, order='zyx', positions=False):
 
 if __name__ == "__main__":
 
-    file_name = "/home/taras/Documents/Datasets/SpeechToMotion/Irish/BVHs/NaturalTalking_026.bvh"
-	#"/home/taras/Documents/Datasets/SpeechToMotion/Irish/BVHs/NaturalTalking_005.bvh"
+    file_name = "/home/taras/Documents/Datasets/SpeechToMotion/Irish/ResampledBVHs/Motion_30.bvh"
     animation, joint_names, frametime = load(file_name)
     print(frametime)
-    animation = animation[1449:65364]
-    save("/home/taras/Documents/Datasets/SpeechToMotion/Irish/Cropped BVHs/Motion_26.bvh",animation, joint_names, frametime)
+
+    """ if frametime == 0.00833333:
+        # Downsample from 120 fps to 60 fps
+        down_sampled_animation = animation[::2]
+        frametime = frametime*2
+        animation = down_sampled_animation """
+
+    animation = animation[987:34635]
+
+    save("/home/taras/Documents/Datasets/SpeechToMotion/Irish/Resampled+Cropped/Motions/Motion_30.bvh",animation, joint_names, frametime)

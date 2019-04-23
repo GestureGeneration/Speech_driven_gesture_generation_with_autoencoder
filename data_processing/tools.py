@@ -4,20 +4,20 @@ It is used in several other scripts:
 for generating bvh files, aligning sequences and calculation of speech features
 """
 
-import numpy as np
+import ctypes
+
+import librosa
+import librosa.display
 import matplotlib.pyplot as plt
-from pydub import AudioSegment
+import numpy as np
 import pandas as pd
-import scipy.io as sio
-from alt_prosody import compute_prosody
+import pyreaper
+from pydub import AudioSegment
+from python_speech_features import mfcc
 
 # Acoustic signal processing
 import scipy.io.wavfile as wav
-import librosa
-import librosa.display
-import pyreaper
-import ctypes
-from python_speech_features import mfcc
+from audio_processing.alt_prosody import compute_prosody
 
 MFCC_INPUTS=26 # How many features we will store for each MFCC vector
 

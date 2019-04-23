@@ -4,17 +4,12 @@ This script does preprocessing of the dataset specified in DATA_DIR
 It should be used before training, as described in the README.md
 """
 
-import sys
 import os
 import os.path
-import pandas as pd
-import numpy as np
-import scipy.io.wavfile as wav
-import pyquaternion as pyq
+import sys
 
-from tools import *
-from alt_prosody import compute_prosody
 from bvh_read.BVH import load
+from tools import *
 
 N_OUTPUT = 168 # Number of gesture features (position)
 DATA_DIR = ''
@@ -203,7 +198,7 @@ def create(name):
             X = np.concatenate((X, input_vectors), axis=0)
             Y = np.concatenate((Y, output_vectors), axis=0)
 
-        if i%3==0:
+        if i%2==0:
             print("^^^^^^^^^^^^^^^^^^")
             print('{:.2f}% of processing for {:.8} dataset is done'.format(100.0 * (i+1) / len(DATA_FILE), str(name)))
             print("Current dataset sizes are:")
