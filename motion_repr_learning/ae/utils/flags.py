@@ -52,12 +52,12 @@ flags.DEFINE_float('delta_for_early_stopping', 0.5, 'How much worst the results 
                                                     ' 0.05 mean 5% worst than best we had.')
 
 #                       Network Architecture Specific Flags
-flags.DEFINE_integer('frame_size', 384, 'Dimensionality of the input for a single frame')
+flags.DEFINE_integer('frame_size', 168, 'Dimensionality of the input for a single frame')
 
 flags.DEFINE_integer("num_hidden_layers", 1, "Number of hidden layers")
 flags.DEFINE_integer("middle_layer", 1, "Number of hidden layers")
 
-flags.DEFINE_integer('layer1_width', 312, 'Number of units in each hidden layer ')
+flags.DEFINE_integer('layer1_width', 128, 'Number of units in each hidden layer ')
 flags.DEFINE_integer('layer2_width', 248, 'Number of units in each hidden layer ')
 flags.DEFINE_integer('layer3_width', 312, 'Number of units in each hidden layer ')
 

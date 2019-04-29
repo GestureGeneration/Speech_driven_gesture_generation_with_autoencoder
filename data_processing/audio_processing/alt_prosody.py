@@ -32,6 +32,4 @@ def compute_prosody(audio_filename, time_step=0.05):
     pitch_norm = np.clip(np.log(pitch_values + 1) - 4, 0, None)
     intensity_norm = np.clip(np.log(intensity_values) - 3, 0, None)
 
-    #prosody = np.column_stack((pitch_norm, intensity_norm))
-
     return pitch_norm, intensity_norm

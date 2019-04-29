@@ -15,7 +15,7 @@ N_OUTPUT = 168 # Number of gesture features (position)
 DATA_DIR = ''
 N_CONTEXT = 0  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
 WINDOW_LENGTH = 50 # in miliseconds
-FEATURES = "MFCC"
+FEATURES = "Pros"
 
 if FEATURES == "MFCC":
     N_INPUT = 26 # Number of MFCC features
@@ -120,11 +120,11 @@ def create_vectors(audio_filename, gesture_filename):
 
         input_vectors = calculate_mfcc(audio_filename)
 
-    if FEATURES == "Pros":
+    elif FEATURES == "Pros":
 
         input_vectors = extract_prosodic_features(audio_filename)
 
-    if FEATURES == "MFCC+Pros":
+    elif FEATURES == "MFCC+Pros":
 
         mfcc_vectors = calculate_mfcc(audio_filename)
 
@@ -134,11 +134,11 @@ def create_vectors(audio_filename, gesture_filename):
 
         input_vectors = np.concatenate((mfcc_vectors, pros_vectors), axis=1)
 
-    if FEATURES =="Spectro":
+    elif FEATURES =="Spectro":
 
         input_vectors = calculate_spectrogram(audio_filename)
 
-    if FEATURES == "Spectro+Pros":
+    elif FEATURES == "Spectro+Pros":
         spectr_vectors = calculate_spectrogram(audio_filename)
 
         pros_vectors = extract_prosodic_features(audio_filename)
@@ -151,6 +151,10 @@ def create_vectors(audio_filename, gesture_filename):
     animation, joint_names, frametime = load(gesture_filename)
 
     output_vectors = list(animation.positions)
+
+    # Debug
+    print(len(input_vectors))
+    print(len(output_vectors))
 
     # Step 3: Align vector length
     input_vectors, output_vectors = shorten(input_vectors, output_vectors)

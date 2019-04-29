@@ -11,9 +11,11 @@ from os import path
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
-NUM_OF_TEST = 2
-FIRST_DATA_ID = 1
-LAST_DATA_ID = 30
+TEST_LAST_ID = 3
+DEV_LAST_ID = 6
+TRAIN_LAST_ID = 31
+
+# First few - for testing and validation, the rest - for training
 
 AUGMENT = 0 # True
 
@@ -29,27 +31,10 @@ def _download_datasets(data_dir):
 
     _create_dir(data_dir)
 
-    # prepare training data (including validation data)
-    for i in range (FIRST_DATA_ID, LAST_DATA_ID - NUM_OF_TEST):
-        filename = "Audio_" + str(i) + ".wav"
-        original_file_path = path.join("dataset/speech/" + filename)
-        if os.path.exists(original_file_path):
-            target_file_path = path.join(data_dir + "train/inputs/" + filename)
-            print(target_file_path)
-            shutil.copy(original_file_path, target_file_path)
-        else:
-            print(original_file_path + " does not exist")
-        filename = "Motion_" + str(i) + ".bvh"
-        original_file_path = path.join("dataset/motion/" + filename)
-        if os.path.exists(original_file_path):
-            target_file_path = path.join(data_dir + "train/labels/" + filename)
-            print(target_file_path)
-            shutil.copy(original_file_path, target_file_path)
-        else:
-            print(original_file_path + " does not exist")
-
+    print("TEST")
     # prepare test data
-    for i in range(LAST_DATA_ID - NUM_OF_TEST, LAST_DATA_ID + 1,2):
+    for i in range(1, TEST_LAST_ID):
+        print(i)
         filename = "Audio_" + str(i) + ".wav"
         original_file_path = path.join("dataset/speech/" + filename)
         if os.path.exists(original_file_path):
@@ -67,8 +52,11 @@ def _download_datasets(data_dir):
         else:
             print(original_file_path + " does not exist")
 
+    print("DEV")
+
     # prepare dev data (does not affect results of training at all)
-    for i in range(LAST_DATA_ID - NUM_OF_TEST + 1, LAST_DATA_ID + 1, 2):
+    for i in range(TEST_LAST_ID, DEV_LAST_ID):
+        print(i)
         filename = "Audio_" + str(i) + ".wav"
         original_file_path = path.join("dataset/speech/" + filename)
         if os.path.exists(original_file_path):
@@ -86,9 +74,32 @@ def _download_datasets(data_dir):
         else:
             print(original_file_path + " does not exist")
 
+    # prepare training data (including validation data)
+    for i in range(DEV_LAST_ID, TRAIN_LAST_ID):
+
+        print(i)
+        filename = "Audio_" + str(i) + ".wav"
+        original_file_path = path.join("dataset/speech/" + filename)
+        if os.path.exists(original_file_path):
+            target_file_path = path.join(data_dir + "train/inputs/" + filename)
+            print(target_file_path)
+            shutil.copy(original_file_path, target_file_path)
+        else:
+            print(original_file_path + " does not exist")
+        filename = "Motion_" + str(i) + ".bvh"
+        original_file_path = path.join("dataset/motion/" + filename)
+        if os.path.exists(original_file_path):
+            target_file_path = path.join(data_dir + "train/labels/" + filename)
+            print(target_file_path)
+            shutil.copy(original_file_path, target_file_path)
+        else:
+            print(original_file_path + " does not exist")
+
+
     # data augmentation
-    if AUGMENT:
+    """if AUGMENT:
         os.system('./data_processing/add_noisy_data.sh {0} {1} {2} {3}'.format("train", FIRST_DATA_ID, LAST_DATA_ID-NUM_OF_TEST, data_dir))
+    """
 
     extracted_dir = path.join(data_dir)
 
@@ -119,9 +130,9 @@ def _create_dir(data_dir):
 
 
 def _format_datasets(extracted_dir):
-    train_files = _files_to_pandas_dataframe(extracted_dir, "train", range(FIRST_DATA_ID, LAST_DATA_ID - NUM_OF_TEST))
-    test_files = _files_to_pandas_dataframe(extracted_dir, "test", range(LAST_DATA_ID - NUM_OF_TEST, LAST_DATA_ID + 1, 2))
-    dev_files = _files_to_pandas_dataframe(extracted_dir, "dev", range(LAST_DATA_ID - NUM_OF_TEST+1, LAST_DATA_ID + 1,2))
+    test_files = _files_to_pandas_dataframe(extracted_dir, "test", range(1, TEST_LAST_ID))
+    dev_files = _files_to_pandas_dataframe(extracted_dir, "dev", range(TEST_LAST_ID, DEV_LAST_ID))
+    train_files = _files_to_pandas_dataframe(extracted_dir, "train", range(DEV_LAST_ID, TRAIN_LAST_ID))
 
     return dev_files, train_files, test_files
 

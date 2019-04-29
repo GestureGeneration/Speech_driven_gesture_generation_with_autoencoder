@@ -93,11 +93,7 @@ def calculate_mfcc(audio_filename):
         audio = (audio[:, 0] + audio[:, 1]) / 2
 
     # Calculate MFCC feature with the window frame it was designed for
-    input_vectors = mfcc(audio, winlen=0.02, winstep=0.01, samplerate=fs, numcep=MFCC_INPUTS)
-
-    input_vectors = [average(input_vectors[:, i], 5) for i in range(MFCC_INPUTS)]
-
-    feature_vectors = np.transpose(input_vectors)
+    feature_vectors = mfcc(audio, winlen=0.06666666666, winstep=0.0166666666, samplerate=fs, numcep=MFCC_INPUTS)
 
     return feature_vectors
 
@@ -218,7 +214,7 @@ def extract_prosodic_features(audio_filename):
         pros_feature:     energy, energy_der, pitch, pitch_der, pitch_ind
     """
 
-    WINDOW_LENGTH = 5
+    WINDOW_LENGTH = 5.555555555
 
     # Read audio from file
     sound = AudioSegment.from_file(audio_filename, format="wav")
@@ -233,10 +229,10 @@ def extract_prosodic_features(audio_filename):
     pitch_der = derivative(t, pitch)
 
     # Average everything in order to match the frequency
-    energy = average(energy, 10)
-    energy_der = average(energy_der, 10)
-    pitch = average(pitch, 10)
-    pitch_der = average(pitch_der, 10)
+    energy = average(energy, 3)
+    energy_der = average(energy_der, 3)
+    pitch = average(pitch, 3)
+    pitch_der = average(pitch_der, 3)
 
     # Cut them to the same size
     min_size = min(len(energy), len(energy_der), len(pitch_der), len(pitch_der))
