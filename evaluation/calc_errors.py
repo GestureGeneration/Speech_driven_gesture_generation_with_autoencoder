@@ -22,23 +22,6 @@ def read_joint_names(filename):
 
     return joint_names
 
-
-def remove_velocity(data, dim=3):
-    """Remove velocity values from raw prediction data
-
-      Args:
-          data:         array containing both position and velocity values
-          dim:          gesture dimensionality
-
-      Returns:
-          np.ndarray:   array containing only position values
-    """
-
-    starts = np.arange(0, data.shape[1], dim * 2)
-    stops = np.arange(dim, data.shape[1], dim * 2)
-    return np.hstack([data[:, i:j] for i, j in zip(starts, stops)])
-
-
 def MAE(original, predicted, dim=3):
     """Compute Mean Absolute Error (MAE)
 
@@ -133,7 +116,7 @@ def main():
         raise ValueError('Unknown metric: \'{}\'. Choose from {}'
                          ''.format(args.metric, list(metrics.keys())))
 
-    joint_names = read_joint_names(args.joints)
+    """joint_names = read_joint_names(args.joints)
 
     if args.select is not None:
         selected_joints = []
@@ -154,7 +137,9 @@ def main():
         selected_joints = range(len(joint_names))
 
     joint_names = [joint_names[s] for s in selected_joints]
-    out_lines = [','.join(['file'] + joint_names) + '\n']
+    out_lines = [','.join(['file'] + joint_names) + '\n']"""
+
+    out_lines = ['First empty line \n']
 
     errors = []
     for original_file, predicted_file in zip(original_files, predicted_files):
@@ -167,13 +152,7 @@ def main():
             original = original[:length]
             predicted = predicted[:length]
 
-        if predicted.shape[1] == 192 * 2:
-            print(predicted.shape)
-            print("Removing the velocity")
-            # Remove the velocity
-            predicted = remove_velocity(predicted)
-
-        error = metrics[args.metric](original, predicted)[selected_joints]
+        error = metrics[args.metric](original, predicted)#[selected_joints]
         errors.append(error)
 
         basename = os.path.basename(predicted_file)

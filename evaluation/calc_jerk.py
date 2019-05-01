@@ -144,7 +144,7 @@ def main():
         raise ValueError('Unknown measure: \'{}\'. Choose from {}'
                          ''.format(args.measure, list(measures.keys())))
 
-    joint_names = read_joint_names(args.joints)
+    """joint_names = read_joint_names(args.joints)
 
     if args.select is not None:
         selected_joints = []
@@ -164,9 +164,9 @@ def main():
         # Use all joints
         selected_joints = range(len(joint_names))
 
-    joint_names = [joint_names[s] for s in selected_joints]
-    original_out_lines = [','.join(['file'] + joint_names) + '\n']
-    predicted_out_lines = [','.join(['file'] + joint_names) + '\n']
+    joint_names = [joint_names[s] for s in selected_joints]"""
+    original_out_lines = ['Fake first line \n'] #[','.join(['file'] + joint_names) + '\n']
+    predicted_out_lines = ['Fake first line \n'] # [','.join(['file'] + joint_names) + '\n']
 
     original_values = []
     predicted_values = []
@@ -180,8 +180,8 @@ def main():
             original = original[:length]
             predicted = predicted[:length]
 
-        original_value = measures[args.measure](original)[selected_joints]
-        predicted_value = measures[args.measure](predicted)[selected_joints]
+        original_value = measures[args.measure](original)#[selected_joints]
+        predicted_value = measures[args.measure](predicted)#[selected_joints]
 
         original_values.append(original_value)
         predicted_values.append(predicted_value)

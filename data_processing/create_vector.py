@@ -8,10 +8,15 @@ import os
 import os.path
 import sys
 
-from bvh_read.BVH import load
-from tools import *
 
-N_OUTPUT = 168 # Number of gesture features (position)
+module_path = os.path.abspath(os.path.join('/home/taras/Desktop/Work/Code/Git/My_Fork/Speech_driven_gesture_generation_with_autoencoder/'))
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
+from data_processing.bvh_read.BVH_io import bvh2npy
+from data_processing.tools import *
+
+N_OUTPUT = 24 # Number of gesture features (position)
 DATA_DIR = ''
 N_CONTEXT = 0  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
 WINDOW_LENGTH = 50 # in miliseconds
@@ -148,9 +153,9 @@ def create_vectors(audio_filename, gesture_filename):
         input_vectors = np.concatenate((spectr_vectors, pros_vectors), axis=1)
 
     # Step 2: Vectorize BVH
-    animation, joint_names, frametime = load(gesture_filename)
 
-    output_vectors = list(animation.positions)
+    Hand_joints = ['Head', 'RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'LeftArm', 'LeftForeArm', 'LeftHand']
+    output_vectors =  bvh2npy(gesture_filename, Hand_joints)
 
     # Debug
     print(len(input_vectors))
