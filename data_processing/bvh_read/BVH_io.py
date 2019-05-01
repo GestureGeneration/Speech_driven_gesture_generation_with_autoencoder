@@ -14,7 +14,6 @@ from data_processing.bvh_read.pymo.parsers import BVHParser
 from data_processing.bvh_read.pymo.preprocessing import *
 from data_processing.bvh_read.pymo.writers import *
 
-
 def bvh2npy(input_file, select_joints = None, hips_centering = False, plot = False):
 
     p = BVHParser()
@@ -33,17 +32,15 @@ def bvh2npy(input_file, select_joints = None, hips_centering = False, plot = Fal
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
 
+        #DEBUG
+        duration = 1
+
     if select_joints is None:
         select_joints = data_pos[0].skeleton
 
     arms_coords = []
 
     for time_step in range(duration):
-
-        if plot:
-            ax = fig.add_subplot(111, projection='3d')
-
-        print(time_step)
 
         current_frame = []
 
@@ -89,7 +86,7 @@ def bvh2npy(input_file, select_joints = None, hips_centering = False, plot = Fal
         plt.show()
 
     # Reshape the array
-    final_coords = coords.reshape((coords.shape[0],-1))
+    final_coords = coords
 
     return final_coords
 
@@ -97,16 +94,17 @@ def bvh2npy(input_file, select_joints = None, hips_centering = False, plot = Fal
 
 if __name__ == "__main__":
 
-    file = 'PyMoFiles/demos/data/Motion_2_short.bvh'
+    file = 'test_data/Motion_5_short.bvh'
 
     Hand_joints = ['Head', 'RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'LeftArm', 'LeftForeArm',
                    'LeftHand']  #
 
-    final_coords = bvh2npy(file, Hand_joints, hips_centering=True)
+    final_coords = bvh2npy(file, Hand_joints, hips_centering=False, plot=False)
 
     print(final_coords.shape)
+    # coords.reshape((coords.shape[0],-1))
 
-    np.save('InitialExample.npy', final_coords)
+    np.save('test_data/Motion_5.npy', final_coords)
 
 
 
