@@ -32,17 +32,17 @@ if ENCODED:
     else:    
         N_OUTPUT = int(sys.argv[6])  # Representation dimensionality
 else:
-    N_OUTPUT = 168  # Number of Gesture Feature (position + velocity)
+    N_OUTPUT = 24  # Number of Gesture Feature (position + velocity)
 
 
 EPOCHS = int(sys.argv[2])
 DATA_DIR = sys.argv[3]
 N_INPUT = int(sys.argv[4])  # Number of input features
 
-BATCH_SIZE = 2056
-N_HIDDEN = 256
+BATCH_SIZE = 1024
+N_HIDDEN = 32
 
-N_CONTEXT = 40 + 1  # The number of frames in the context
+N_CONTEXT = 60 + 1  # The number of frames in the context
 
 
 def train(model_file):
@@ -81,18 +81,18 @@ def train(model_file):
     # Define Keras model
 
     model = Sequential()
-    model.add(Conv1D(1, kernel_size = 15, padding='same',
+    model.add(TimeDistributed(Dense(N_HIDDEN), input_shape=(N_CONTEXT, N_INPUT)))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Dropout(0.1))
+
+    """model.add(Conv1D(1, kernel_size = 15, padding='same',
 		input_shape=(N_CONTEXT, N_INPUT)))
     model.add(AveragePooling1D(pool_size=N_CONTEXT))
     model.add(Dense(N_HIDDEN))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Dropout(0.1))
-    
-    model.add(TimeDistributed(Dense(N_HIDDEN)))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.1))
+    model.add(Dropout(0.1))"""
     
     model.add(TimeDistributed(Dense(N_HIDDEN)))
     model.add(BatchNormalization())

@@ -86,7 +86,7 @@ def bvh2npy(input_file, select_joints = None, hips_centering = False, plot = Fal
         plt.show()
 
     # Reshape the array
-    final_coords = coords
+    final_coords = coords.reshape((coords.shape[0],-1))
 
     return final_coords
 
@@ -99,12 +99,12 @@ if __name__ == "__main__":
     Hand_joints = ['Head', 'RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'LeftArm', 'LeftForeArm',
                    'LeftHand']  #
 
-    final_coords = bvh2npy(file, Hand_joints, hips_centering=False, plot=False)
+    final_coords = bvh2npy(file, Hand_joints, hips_centering=True, plot=False)
 
     print(final_coords.shape)
     # coords.reshape((coords.shape[0],-1))
 
-    np.save('test_data/Motion_5.npy', final_coords)
+    np.save('test_data/Motion_5_centered.npy', final_coords)
 
 
 
