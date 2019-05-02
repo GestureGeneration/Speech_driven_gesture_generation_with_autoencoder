@@ -37,7 +37,7 @@ cd ../../example_scripts
 Tr_START=$(date +%s)
 
 # Train model on the reprentation
-CUDA_VISIBLE_DEVICES=$gpu python ../train.py models/$model.hdf5 100 $data_dir $numb_in_features True $dim
+CUDA_VISIBLE_DEVICES=$gpu python ../train.py models/$model.hdf5 50 $data_dir $numb_in_features True $dim
 
 Tr_FINISH=$(date +%s)
 

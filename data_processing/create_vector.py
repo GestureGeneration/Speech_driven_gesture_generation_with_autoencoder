@@ -149,8 +149,10 @@ def create_vectors(audio_filename, gesture_filename):
 
     # Step 2: Vectorize BVH
     animation, joint_names, frametime = load(gesture_filename)
-
     output_vectors = list(animation.positions)
+
+    Hand_joints = ['Head', 'RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'LeftArm', 'LeftForeArm', 'LeftHand']
+    output_vectors =  bvh2npy(gesture_filename, Hand_joints, hips_centering=True)
 
     # Debug
     print(len(input_vectors))

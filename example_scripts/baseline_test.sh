@@ -17,25 +17,19 @@ cd ..
 rm evaluation/data/predicted/$speech_features/*
 
 # Make predictions for all the test sequences
-# (replace 1094 by 1093 for the dev sequences)
-for seq in `seq 1094 2 1182`; 
+for seq in `seq 1 1 2`;
         do
 		echo
                 echo 'Predicting sequence' $seq
-                CUDA_VISIBLE_DEVICES=$gpu python predict.py $model.hdf5 $data_dir/test_inputs/X_test_audio${seq}.npy normal_prediction$seq.txt
-                mv normal_prediction$seq.txt example_scripts/gestures/gesture${seq}.txt	
+                CUDA_VISIBLE_DEVICES=$gpu python predict.py $model.hdf5 $data_dir/test_inputs/X_test_Audio_${seq}.npy normal_prediction$seq.npy
+                mv normal_prediction$seq.npy example_scripts/gestures/gesture${seq}.npy
         done
 
-echo 'Removing the velocities ...'
-python helpers/remove_velocity.py -g example_scripts/gestures
 cd example_scripts/gestures
-
-# remove gestures with velocites
-rm *.txt
 
 # Move gestrues without velocities to the corresponding folder
 mkdir -p ../../evaluation/data/predicted/$speech_features/
-mv no_vel/*.txt ../../evaluation/data/predicted/$speech_features/
+mv *.npy ../../evaluation/data/predicted/$speech_features/
 cd ../../evaluation
 
 # In order for an evaluation to be correct ONLY ground truth motion 3d coords in txt format for the

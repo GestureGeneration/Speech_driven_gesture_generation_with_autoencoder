@@ -15,7 +15,7 @@ echo "Training "${model}" on the ${folder} folder"
 START=$(date +%s)
 
 # Train baseline model
-CUDA_VISIBLE_DEVICES=$gpu python ../train.py models/$model.hdf5 100 $data_dir $numb_in_features False
+CUDA_VISIBLE_DEVICES=$gpu python ../train.py models/$model.hdf5 20 $data_dir $numb_in_features False
 
 Tr_FINISH=$(date +%s)
 
