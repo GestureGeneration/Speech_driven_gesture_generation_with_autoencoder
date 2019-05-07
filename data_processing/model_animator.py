@@ -6,17 +6,29 @@ from scipy.spatial import distance
 from pyquaternion import Quaternion
 from ikpy import geometry_utils
 
+# For smoothing the signal
+from scipy.signal import savgol_filter
+
 # author Pieter Wolfert
 
 class ModelSkeletons:
     def __init__(self, data_path):
         skeletons = np.load(data_path)
+
+        # Smoothen
+        skeletons = self.smoothing(skeletons)
+
+        # Reshape to 3d coords
+        skeletons = np.reshape(skeletons, (-1,8, 3))
+
         self.skeletons = [self.preprocessSkeletonT(x) for x in skeletons]
+
 
     def getSkeletons(self):
         return self.skeletons
 
     def preprocessSkeletonT(self, skelet):
+
         """Normalize and zero orient skeleton file by Taras"""
         x, y, z = skelet[:, 0], skelet[:, 1], skelet[:, 2]
         mid_x, mid_y, mid_z = (x[5] + x[2]) / 2, (y[5] + y[2]) / 2,\
@@ -101,13 +113,22 @@ class ModelSkeletons:
                 [skelet[:, 2][1], skelet[:, 2][5]])
         ax.scatter(skelet[:, 0], skelet[:, 1], skelet[:, 2])
 
+    def smoothing(self, motion):
+
+        smoothed = [savgol_filter(motion[:,i], 25, 3) for i in range(motion.shape[1])]
+
+        new_motion = np.array(smoothed).transpose()
+
+        return new_motion
+
 class AnimateSkeletons:
     """Animate plots for drawing Taras' skeleton sequences in 2D."""
 
     def __init__(self):
         """Instantiate an object to visualize the generated poses."""
         self.fig = plt.figure()
-        self.ax = plt.axes(xlim=(-1.5, 1.5), ylim=(-1.2, 1.2))
+        self.ax =  plt.axes(xlim=(-1.5, 1.5), ylim=(-1.5, 1.0))
+        # plt.axes(xlim=(-150, 150), ylim=(-20, 220))  #
         self.ax.axis('off')
         self.line_one = self.ax.plot([], [], lw=2, c='b', marker="s")[0]
         self.line_two = self.ax.plot([], [], lw=2, c='b', marker="s")[0]
@@ -141,16 +162,19 @@ class AnimateSkeletons:
 
 
 def main():
-    ml = ModelSkeletons("./bvh_read/test_data/Motion_5.npy") #Motion_30.npy")
-    skeletons = ml.getSkeletons()
-    ml.plotSkeletonT(skeletons[0])
 
-    am = AnimateSkeletons()
-    am.initLines()
+    for id in range(1,31):
+        ml = ModelSkeletons("./bvh_read/test_data/Pros/gesture"+str(id)+".npy") #Motion_30.npy")
+        skeletons = ml.getSkeletons()
+        ml.plotSkeletonT(skeletons[0])
 
-    anim = am.animate(frames_to_play=skeletons, interval=17)
-    anim.save('Motion_5.mp4', writer='ffmpeg', fps=60)
+        am = AnimateSkeletons()
+        am.initLines()
 
+        anim = am.animate(frames_to_play=skeletons, interval=17)
+        anim.save('gesture_'+str(id)+'.mp4', writer='ffmpeg', fps=60)
+        print(id)
+    #Gesture26_L_30_bs_128_w_36_250ep.mp4
 
 if __name__ == '__main__':
     main()
