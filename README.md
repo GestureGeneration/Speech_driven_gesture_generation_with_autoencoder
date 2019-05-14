@@ -1,5 +1,6 @@
 # Speech Driven Gesture Generation With Autoencoder
 This repository contains Keras implementation of the speech-driven gesture generation by a neural network. 
+Explanation of the method can be found on Youtube: https://youtu.be/Iv7UBe92zrw
 
 # Requirements
 
