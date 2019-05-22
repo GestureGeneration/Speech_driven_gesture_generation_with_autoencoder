@@ -1,5 +1,5 @@
 # Speech Driven Gesture Generation With Autoencoder
-This repository contains Keras implementation of the speech-driven gesture generation by a neural network. 
+This repository contains speech-driven gesture generation neural network implementation using Keras and Tensorflow. 
 
 # Requirements
 
@@ -40,54 +40,14 @@ ________________________________________________________________________________
 
 We write all the parameters which needs to be specified by a user in the capslock.
 
-## 1. Download raw data
+## 1. Download preprocessed dataset
 
-- Clone this repository
-- Download a dataset from `https://www.dropbox.com/sh/j419kp4m8hkt9nd/AAC_pIcS1b_WFBqUp5ofBG1Ia?dl=0`
-- Create a directory named `dataset` and put two directories `motion/` and `speech/` under `dataset/`
+- Download a [pre-processed dataset](https://kth.box.com/s/zsd23exh9t5fuxjha1ag1ofs6w578pe6)
 
-## 2. Split dataset
-
-- Put the folder with the dataset in the root directory of this repo: next to the script "prepare_data.py"
-- Run the following command
-
-```sh
-python data_processing/prepare_data.py DATA_DIR
-# DATA_DIR = directory to save data such as 'data/'
-```
-
-Note: DATA_DIR is not a directory where the raw data is stored (the folder with data, "dataset" , has to be stored in the root folder of this repo). DATA_DIR is the directory where the postprocessed data should be saved. After this step you don't need to have "dataset" in the root folder any more. 
-You should use the same DATA_DIR in all the following scripts.
-
-After this command:
-- `train/` `test/` `dev/` are created under `DATA_DIR/`  
-  - in `inputs/` inside each directory, audio(id).wav files are stored  
-  - in `labels/` inside each directory, gesture(id).bvh files are stored  
-- under `DATA_DIR/`,  three csv files `gg-train.csv` `gg-test.csv` `gg-dev.csv` are created and these files have paths to actual data
-
-
-## 3. Convert the dataset into vectors
-
-```sh
-python data_processing/create_vector.py DATA_DIR N_CONTEXT
-# N_CONTEXT = number of context, in our experiments was set to '60'
-# (this means 30 steps backwards and forwards)
-```
-
-Note: if you change the N_CONTEXT value - you need to update it in the `train.py` script.
-
-(You are likely to get a warning like this "WARNING:root:frame length (5513) is greater than FFT size (512), frame will be truncated. Increase NFFT to avoid." )
-
-As a result of running this script
-- numpy binary files `X_train.npy`, `Y_train.npy` (vectord dataset) are created under `DATA_DIR`
-- under `DATA_DIR/test_inputs/` , test audios, such as `X_test_audio1168.npy` , are created
-- when N_CONTEXT = 60, the audio vector's shape is (num of timesteps, 61, 26) 
-- gesture vector's shape is（num of timesteps, 384)
-  - 384 = 64joints × (x,y,z positions + x,y,z velocities)
 
 **If you don't want to customize anything - you can skip reading about steps 4-7 and just use already prepared scripts at the folder `example_scripts`**
 
-## 4. (Optional) Learn motion representation by AutoEncoder
+## 4. Learn motion representation by AutoEncoder
 
 Create a directory to save training checkpoints such as `chkpt/` and use it as CHKPT_DIR parameter.
 #### Learn dataset encoding
@@ -95,7 +55,7 @@ Create a directory to save training checkpoints such as `chkpt/` and use it as C
 python motion_repr_learning/ae/learn_dataset_encoding.py DATA_DIR -chkpt_dir=CHKPT_DIR -layer1_width=DIM
 ```
 
-The optimal dimensionality (DIM) in our experiment was 325
+The optimal dimensionality (DIM) in our experiment was 20
 
 #### Encode dataset
 Create DATA_DIR/DIM directory
@@ -144,7 +104,7 @@ Use scripts in the `evaluation` folder of this directory.
 Examples are provided in the `example_scripts` folder of this repository
 
 ## 8. Qualitative evaluation
-Use [animation server](https://secret-meadow-14164.herokuapp.com/coordinates.html)
+Use script model_animator.py
 
 &nbsp;
 ## Contact
