@@ -39,7 +39,7 @@ flags.DEFINE_float('dropout', 0.9, 'Probability to keep the neuron on')
 flags.DEFINE_integer('batch_size', 128,
                      'Size of the mini batch')
 
-flags.DEFINE_integer('training_epochs', 20,
+flags.DEFINE_integer('training_epochs', 50,
                      "Number of training epochs for pretraining layers")
 flags.DEFINE_integer('pretraining_epochs', 5,
                      "Number of training epochs for pretraining layers")
@@ -52,12 +52,12 @@ flags.DEFINE_float('delta_for_early_stopping', 0.5, 'How much worst the results 
                                                     ' 0.05 mean 5% worst than best we had.')
 
 #                       Network Architecture Specific Flags
-flags.DEFINE_integer('frame_size', 168, 'Dimensionality of the input for a single frame')
+flags.DEFINE_integer('frame_size', 24, 'Dimensionality of the input for a single frame')
 
 flags.DEFINE_integer("num_hidden_layers", 1, "Number of hidden layers")
 flags.DEFINE_integer("middle_layer", 1, "Number of hidden layers")
 
-flags.DEFINE_integer('layer1_width', 128, 'Number of units in each hidden layer ')
+flags.DEFINE_integer('layer1_width', 20, 'Number of units in each hidden layer ')
 flags.DEFINE_integer('layer2_width', 248, 'Number of units in each hidden layer ')
 flags.DEFINE_integer('layer3_width', 312, 'Number of units in each hidden layer ')
 
