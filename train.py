@@ -9,7 +9,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation, Dropout, Conv1D, AveragePooling1D
+from keras.layers import Dense, Activation, Dropout, Conv1D, AveragePooling1D, Flatten
 from keras.layers.recurrent import SimpleRNN, LSTM, GRU
 from keras.optimizers import SGD, Adam
 from keras.layers.wrappers import TimeDistributed, Bidirectional
@@ -39,8 +39,8 @@ EPOCHS = int(sys.argv[2])
 DATA_DIR = sys.argv[3]
 N_INPUT = int(sys.argv[4])  # Number of input features
 
-BATCH_SIZE = 1024
-N_HIDDEN = 32
+BATCH_SIZE = 128 # 512
+N_HIDDEN = 36 # 32
 
 N_CONTEXT = 60 + 1  # The number of frames in the context
 
@@ -81,20 +81,8 @@ def train(model_file):
     # Define Keras model
 
     model = Sequential()
-    model.add(TimeDistributed(Dense(N_HIDDEN), input_shape=(N_CONTEXT, N_INPUT)))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.1))
 
-    """model.add(Conv1D(1, kernel_size = 15, padding='same',
-		input_shape=(N_CONTEXT, N_INPUT)))
-    model.add(AveragePooling1D(pool_size=N_CONTEXT))
-    model.add(Dense(N_HIDDEN))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
-    model.add(Dropout(0.1))"""
-    
-    model.add(TimeDistributed(Dense(N_HIDDEN)))
+    model.add(TimeDistributed(Dense(N_HIDDEN), input_shape=(N_CONTEXT, N_INPUT)))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.1))
@@ -103,17 +91,17 @@ def train(model_file):
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.1))
-    
+
     model.add(Dense(N_OUTPUT))
     model.add(Activation('linear'))
 
     print(model.summary())
 
-    optimizer = Adam(lr=0.0003, beta_1=0.9, beta_2=0.999)
+    optimizer = Adam(lr=0.0005, beta_1=0.9, beta_2=0.999)
     model.compile(loss='mean_squared_error', optimizer=optimizer)
 
     hist = model.fit(X_train, Y_train, batch_size=BATCH_SIZE, epochs=EPOCHS, validation_data=(X_validation, Y_validation))
-     
+
     model.save(model_file)
 
     # Save convergence results into an image

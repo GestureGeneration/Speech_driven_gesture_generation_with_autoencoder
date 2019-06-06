@@ -1,6 +1,6 @@
 gpu=0                 # which GPU to use to run the model
-folder=TheLAtest       # which folder with the data to use
-data_dir=/home/taras/Documents/Datasets/SpeechToMotion/Japanese/$folder
-speech_features=MFCC # which speech features to use
-numb_in_features=26  # how many speech features there are
-dim=325              # what is the dimensionality of representation
+folder=Small_hands_60    # which folder with the data to use
+data_dir=/home/taras/Documents/Datasets/SpeechToMotion/Irish/processed/$folder
+speech_features=Pros # which speech features to use
+numb_in_features=4  # how many speech features there are
+dim=20              # what is the dimensionality of representation

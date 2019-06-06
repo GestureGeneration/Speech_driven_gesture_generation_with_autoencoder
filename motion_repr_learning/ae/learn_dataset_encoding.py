@@ -41,9 +41,6 @@ def create_nn(train_data, dev_data, max_val, mean_pose, restoring):
     data_info = tr.DataInfo(data.train.sigma, data.train._sequences.shape,
                             data.test._sequences.shape, max_val, mean_pose)
 
-    # Set "restore" flag
-    fl.FLAGS.restore = restoring
-
     # Train the network
     nn = tr.learning(data, data_info, just_restore=restoring)
 

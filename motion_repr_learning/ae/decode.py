@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     print(decoding.shape)
 
-    np.savetxt(OUTPUT_FILE, decoding, delimiter = ' ')
+    np.save(OUTPUT_FILE, decoding)
 
     # Close Tf session
     nn.session.close()

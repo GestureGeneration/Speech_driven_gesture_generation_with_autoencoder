@@ -157,10 +157,6 @@ def create_vectors(audio_filename, gesture_filename):
     Hand_joints = ['Head', 'RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'LeftArm', 'LeftForeArm', 'LeftHand']
     output_vectors =  bvh2npy(gesture_filename, Hand_joints, hips_centering=True)
 
-    # Debug
-    print(len(input_vectors))
-    print(len(output_vectors))
-
     # Step 3: Align vector length
     input_vectors, output_vectors = shorten(input_vectors, output_vectors)
 

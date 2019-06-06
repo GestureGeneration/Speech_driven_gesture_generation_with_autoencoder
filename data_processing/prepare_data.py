@@ -11,9 +11,9 @@ from os import path
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
-TEST_LAST_ID = 3
-DEV_LAST_ID = 6
-TRAIN_LAST_ID = 31
+TEST_LAST_ID = 27
+DEV_LAST_ID = 28
+TRAIN_LAST_ID = 30
 
 # First few - for testing and validation, the rest - for training
 
@@ -174,4 +174,3 @@ def _files_to_pandas_dataframe(extracted_dir, set_name, idx_range):
 
 if __name__ == "__main__":
     _split_and_format_data(sys.argv[1])
-

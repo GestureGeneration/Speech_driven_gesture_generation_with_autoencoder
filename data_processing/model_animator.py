@@ -10,6 +10,7 @@ from ikpy import geometry_utils
 from scipy.signal import savgol_filter
 
 # author Pieter Wolfert
+# contact: pieter.wolfert[]ugent[]be
 
 class ModelSkeletons:
     def __init__(self, data_path):
@@ -174,7 +175,6 @@ def main():
         anim = am.animate(frames_to_play=skeletons, interval=17)
         anim.save('gesture_'+str(id)+'.mp4', writer='ffmpeg', fps=60)
         print(id)
-    #Gesture26_L_30_bs_128_w_36_250ep.mp4
 
 if __name__ == '__main__':
     main()

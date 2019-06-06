@@ -25,7 +25,7 @@ def predict(model_name, input_file, output_file):
 
     predicted = np.array(model.predict(X))
     print(predicted.shape)
-    np.save(output_file, predicted)
+    np.savetxt(output_file, predicted)
 
 
 if __name__ == "__main__":
