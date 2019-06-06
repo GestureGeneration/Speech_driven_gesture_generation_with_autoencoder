@@ -16,19 +16,6 @@ pip install tensorflow-gpu # if you have GPU
 pip install -r requirements.txt
 ```
 
-### install ffmpeg
-```sh
-# macos
-brew install ffmpeg
-```
-
-```
-# ubuntu
-sudo add-apt-repository ppa:jonathonf/ffmpeg-4
-sudo apt-get update
-sudo apt-get install ffmpeg
-```
-
 
 &nbsp;
 ____________________________________________________________________________________________________________
@@ -42,7 +29,7 @@ We write all the parameters which needs to be specified by a user in the capsloc
 
 ## 1. Download preprocessed dataset
 
-- Download a [pre-processed dataset](https://kth.box.com/s/zsd23exh9t5fuxjha1ag1ofs6w578pe6)
+- Download and extract [pre-processed dataset](https://kth.box.com/s/zsd23exh9t5fuxjha1ag1ofs6w578pe6)
 
 
 **If you don't want to customize anything - you can skip reading about steps 4-7 and just use already prepared scripts at the folder `example_scripts`**
