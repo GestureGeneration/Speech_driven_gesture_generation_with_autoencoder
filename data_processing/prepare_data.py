@@ -15,6 +15,9 @@ TEST_LAST_ID = 3
 DEV_LAST_ID = 6
 TRAIN_LAST_ID = 31
 
+audio_prefix =  "Audio_"
+motion_prefix = "Motion_"
+
 # First few - for testing and validation, the rest - for training
 
 AUGMENT = 0 # True
@@ -35,7 +38,7 @@ def _download_datasets(data_dir):
     # prepare test data
     for i in range(1, TEST_LAST_ID):
         print(i)
-        filename = "Audio_" + str(i) + ".wav"
+        filename = audio_prefix + str(i) + ".wav"
         original_file_path = path.join("dataset/speech/" + filename)
         if os.path.exists(original_file_path):
             target_file_path = path.join(data_dir + "test/inputs/" + filename)
@@ -43,7 +46,7 @@ def _download_datasets(data_dir):
             shutil.copy(original_file_path, target_file_path)
         else:
             print(original_file_path + " does not exist")
-        filename = "Motion_" + str(i) + ".bvh"
+        filename = motion_prefix + str(i) + ".bvh"
         original_file_path = path.join("dataset/motion/" + filename)
         if os.path.exists(original_file_path):
             target_file_path = path.join(data_dir + "test/labels/" + filename)
@@ -57,7 +60,7 @@ def _download_datasets(data_dir):
     # prepare dev data (does not affect results of training at all)
     for i in range(TEST_LAST_ID, DEV_LAST_ID):
         print(i)
-        filename = "Audio_" + str(i) + ".wav"
+        filename = audio_prefix + str(i) + ".wav"
         original_file_path = path.join("dataset/speech/" + filename)
         if os.path.exists(original_file_path):
             target_file_path = path.join(data_dir + "dev/inputs/" + filename)
@@ -65,7 +68,7 @@ def _download_datasets(data_dir):
             shutil.copy(original_file_path, target_file_path)
         else:
             print(original_file_path + " does not exist")
-        filename = "Motion_" + str(i) + ".bvh"
+        filename = motion_prefix + str(i) + ".bvh"
         original_file_path = path.join("dataset/motion/" + filename)
         if os.path.exists(original_file_path):
             target_file_path = path.join(data_dir + "dev/labels/" + filename)
@@ -78,7 +81,7 @@ def _download_datasets(data_dir):
     for i in range(DEV_LAST_ID, TRAIN_LAST_ID):
 
         print(i)
-        filename = "Audio_" + str(i) + ".wav"
+        filename = audio_prefix + str(i) + ".wav"
         original_file_path = path.join("dataset/speech/" + filename)
         if os.path.exists(original_file_path):
             target_file_path = path.join(data_dir + "train/inputs/" + filename)
@@ -86,7 +89,7 @@ def _download_datasets(data_dir):
             shutil.copy(original_file_path, target_file_path)
         else:
             print(original_file_path + " does not exist")
-        filename = "Motion_" + str(i) + ".bvh"
+        filename = motion_prefix + str(i) + ".bvh"
         original_file_path = path.join("dataset/motion/" + filename)
         if os.path.exists(original_file_path):
             target_file_path = path.join(data_dir + "train/labels/" + filename)
@@ -142,11 +145,11 @@ def _files_to_pandas_dataframe(extracted_dir, set_name, idx_range):
     for idx in idx_range:
         # original files
         try:
-            input_file = path.abspath(path.join(extracted_dir, set_name, "inputs", "Audio_" + str(idx) + ".wav"))
+            input_file = path.abspath(path.join(extracted_dir, set_name, "inputs", audio_prefix + str(idx) + ".wav"))
         except OSError:
             continue
         try:
-            label_file = path.abspath(path.join(extracted_dir, set_name, "labels", "Motion_" + str(idx) + ".bvh"))
+            label_file = path.abspath(path.join(extracted_dir, set_name, "labels", motion_prefix + str(idx) + ".bvh"))
         except OSError:
             continue
         try:
