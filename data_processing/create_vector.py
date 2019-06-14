@@ -8,6 +8,9 @@ import os
 import os.path
 import sys
 
+# Set relative path for proper relative import
+sys.path.append(os.path.dirname(sys.path[0]))
+
 from bvh_read.BVH import load
 from tools import *
 

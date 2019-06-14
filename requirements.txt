@@ -10,4 +10,5 @@ python_speech_features
 pydub
 pysptk
 librosa
+praat-parselmouth
 pyreaper
