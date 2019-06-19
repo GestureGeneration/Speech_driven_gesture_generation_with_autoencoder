@@ -149,5 +149,18 @@ Examples are provided in the `example_scripts` folder of this repository
 Use [animation server](https://secret-meadow-14164.herokuapp.com/coordinates.html)
 
 &nbsp;
+
+## Citation
+Here is the citation in bib format:
+```
+@inproceedings{kucherenko2019analyzing,
+  title={Analyzing Input and Output Representations for Speech-Driven Gesture Generation},
+  author={Kucherenko, Taras and Hasegawa, Dai and Henter, Gustav Eje  and Kaneko, Naoshi and Kjellstr{\"o}m, Hedvig},
+  booktitle=={International Conference on Intelligent Virtual Agents (IVA ’19)},
+  year={2019},
+  publisher = {ACM},
+}
+```
+
 ## Contact
 If you encounter any problems/bugs/issues please contact me on Github or by emailing me at tarask@kth.se for any bug reports/questions/suggestions. I prefer questions and bug reports on Github as that provides visibility to others who might be encountering same issues or who have the same questions.
