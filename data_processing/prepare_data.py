@@ -15,8 +15,8 @@ TEST_LAST_ID = 3
 DEV_LAST_ID = 6
 TRAIN_LAST_ID = 31
 
-audio_prefix =  "Audio_"
-motion_prefix = "Motion_"
+audio_prefix = "NaturalTalking_0"
+motion_prefix = "NaturalTalking_0"
 
 # First few - for testing and validation, the rest - for training
 
@@ -78,6 +78,7 @@ def _download_datasets(data_dir):
             print(original_file_path + " does not exist")
 
     # prepare training data (including validation data)
+    print("TRAIN")
     for i in range(DEV_LAST_ID, TRAIN_LAST_ID):
 
         print(i)
@@ -90,6 +91,23 @@ def _download_datasets(data_dir):
         else:
             print(original_file_path + " does not exist")
         filename = motion_prefix + str(i) + ".bvh"
+        original_file_path = path.join("dataset/motion/" + filename)
+        if os.path.exists(original_file_path):
+            target_file_path = path.join(data_dir + "train/labels/" + filename)
+            print(target_file_path)
+            shutil.copy(original_file_path, target_file_path)
+        else:
+            print(original_file_path + " does not exist")
+
+        filename = audio_prefix + str(i) + "_2.wav"
+        original_file_path = path.join("dataset/speech/" + filename)
+        if os.path.exists(original_file_path):
+            target_file_path = path.join(data_dir + "train/inputs/" + filename)
+            print(target_file_path)
+            shutil.copy(original_file_path, target_file_path)
+        else:
+            print(original_file_path + " does not exist")
+        filename = motion_prefix + str(i) + "_2.bvh"
         original_file_path = path.join("dataset/motion/" + filename)
         if os.path.exists(original_file_path):
             target_file_path = path.join(data_dir + "train/labels/" + filename)

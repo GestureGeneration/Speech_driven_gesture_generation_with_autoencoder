@@ -9,13 +9,14 @@ import os.path
 import sys
 
 from bvh_read.BVH import load
+from bvh_read.BVH_io import bvh2npy
 from tools import *
 
-N_OUTPUT = 168 # Number of gesture features (position)
+N_OUTPUT = 207 # Number of gesture features (position)
 DATA_DIR = ''
 N_CONTEXT = 0  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
 WINDOW_LENGTH = 50 # in miliseconds
-FEATURES = "Pros"
+FEATURES = "MFCC"
 
 if FEATURES == "MFCC":
     N_INPUT = 26 # Number of MFCC features
@@ -148,11 +149,7 @@ def create_vectors(audio_filename, gesture_filename):
         input_vectors = np.concatenate((spectr_vectors, pros_vectors), axis=1)
 
     # Step 2: Vectorize BVH
-    animation, joint_names, frametime = load(gesture_filename)
-    output_vectors = list(animation.positions)
-
-    Hand_joints = ['Head', 'RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'LeftArm', 'LeftForeArm', 'LeftHand']
-    output_vectors =  bvh2npy(gesture_filename, Hand_joints, hips_centering=True)
+    output_vectors = bvh2npy(gesture_filename, hips_centering=True)
 
     # Debug
     print(len(input_vectors))

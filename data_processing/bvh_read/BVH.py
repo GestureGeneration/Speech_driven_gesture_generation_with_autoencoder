@@ -4,8 +4,8 @@
 import re
 import numpy as np
 
-import sys
-sys.path.append("data_processing/bvh_read")
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'data_processing/bvh_read'))
 
 from Animation import Animation
 from Quaternions import Quaternions
@@ -59,6 +59,8 @@ def load(filename, start=None, end=None, order=None, world=False):
     (animation, joint_names, frametime)
         Tuple of loaded animation and joint names
     """
+
+    print("Loading file ", filename)
     
     f = open(filename, "r")
 
