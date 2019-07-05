@@ -20,6 +20,7 @@ import scipy.io.wavfile as wav
 from audio_processing.alt_prosody import compute_prosody
 
 MFCC_INPUTS=26 # How many features we will store for each MFCC vector
+WINDOW_LENGTH = 5.555555555
 
 
 def create_bvh(filename, prediction, frame_time):
@@ -55,6 +56,7 @@ def create_bvh(filename, prediction, frame_time):
             label_line = " ".join("{:.6f}".format(x) for x in row) + " "
             fo.write(label_line + '\n')
         print("bvh generated")
+
 
 def shorten(arr1, arr2):
     min_len = min(len(arr1), len(arr2))
@@ -96,6 +98,7 @@ def calculate_mfcc(audio_filename):
     feature_vectors = mfcc(audio, winlen=0.06666666666, winstep=0.0166666666, samplerate=fs, numcep=MFCC_INPUTS)
 
     return feature_vectors
+
 
 def get_energy_level(sound, win_len):
     """ Calculate energy signal of an audio object
@@ -162,7 +165,6 @@ def calculate_pitch(audio_filename):
 
     plot = False
 
-    WINDOW_LENGTH = 5
     pm_times, pm, f0_times, f0, corr = pyreaper.reaper(audio, fs=fs, minf0=80, maxf0=250)
 
     # Remove unstable values
@@ -214,7 +216,7 @@ def extract_prosodic_features(audio_filename):
         pros_feature:     energy, energy_der, pitch, pitch_der, pitch_ind
     """
 
-    WINDOW_LENGTH = 5.555555555
+
 
     # Read audio from file
     sound = AudioSegment.from_file(audio_filename, format="wav")
@@ -258,7 +260,6 @@ def calculate_spectrogram(audio_filename):
         log spectrogram values
     """
 
-    WINDOW_LENGTH = 5
     DIM = 64
 
     fs, audio = wav.read(audio_filename)
@@ -270,7 +271,7 @@ def calculate_spectrogram(audio_filename):
                                             fmax=8000, fmin=20, n_mels=DIM)
 
     # Reduce dimensionality
-    spectr = np.array([average(spectr[freq], 10) for freq in range(DIM)])
+    spectr = np.array([average(spectr[freq], 3) for freq in range(DIM)])
 
     eps = 1e-10
     log_spectr = np.log(abs(spectr)+eps)

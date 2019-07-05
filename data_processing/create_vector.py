@@ -4,18 +4,19 @@ This script does preprocessing of the dataset specified in DATA_DIR
 It should be used before training, as described in the README.md
 """
 
-import os
 import os.path
 import sys
+import matplotlib as plt
+
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 from bvh_read.BVH import load
 from bvh_read.BVH_io import bvh2npy
 from tools import *
 
-N_OUTPUT = 207 # Number of gesture features (position)
+N_OUTPUT = 138 # Number of gesture features (position)
 DATA_DIR = ''
 N_CONTEXT = 0  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
-WINDOW_LENGTH = 50 # in miliseconds
 FEATURES = "MFCC"
 
 if FEATURES == "MFCC":
@@ -102,6 +103,19 @@ def pad_sequence(input_vectors):
 
     return new_input_vectors
 
+def plotSkeletonT(skelet):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    for i in range(len(skelet[0])):
+        ax.scatter(skelet[0, i, 0], skelet[0, i, 1], skelet[0, i, 2])
+
+
+    #ax.scatter(skelet[:, 0], skelet[:, 1], skelet[:, 2])
+
+    plt.show()
 
 def create_vectors(audio_filename, gesture_filename):
     """
@@ -114,6 +128,9 @@ def create_vectors(audio_filename, gesture_filename):
         input_with_context   : speech features
         output_with_context  : motion features
     """
+
+    visualize=False
+
     # Step 1: Vactorizing speech, with features of N_INPUT dimension, time steps of 0.01s
     # and window length with 0.025s => results in an array of 100 x N_INPUT
 
@@ -148,8 +165,27 @@ def create_vectors(audio_filename, gesture_filename):
 
         input_vectors = np.concatenate((spectr_vectors, pros_vectors), axis=1)
 
+    print("Gesture filename: ", gesture_filename)
+
     # Step 2: Vectorize BVH
-    output_vectors = bvh2npy(gesture_filename, hips_centering=True)
+    main_joints = ['Hips', 'Spine', 'Spine1', 'Spine2', 'Spine3', 'Neck', 'Neck1', 'Head',  # Head and spine
+                   'RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'RightHandThumb1',
+                   'RightHandThumb2', 'RightHandThumb3', 'RightHandIndex1', 'RightHandIndex2', 'RightHandIndex3',
+                   'RightHandMiddle1', 'RightHandMiddle2', 'RightHandMiddle3', 'RightHandRing1', 'RightHandRing2',
+                   'RightHandRing3', 'RightHandPinky1', 'RightHandPinky2', 'RightHandPinky3',  # Right hand
+                   'LeftShoulder', 'LeftArm', 'LeftForeArm', 'LeftHand', 'LeftHandThumb1',
+                   'LeftHandThumb2', 'LeftHandThumb3', 'LeftHandIndex1', 'LeftHandIndex2', 'LeftHandIndex3',
+                   'LeftHandMiddle1', 'LeftHandMiddle2', 'LeftHandMiddle3', 'LeftHandRing1', 'LeftHandRing2',
+                   'LeftHandRing3', 'LeftHandPinky1', 'LeftHandPinky2', 'LeftHandPinky3',  # left hand
+                   ]
+
+    output_vectors = bvh2npy(gesture_filename, main_joints, hips_centering=True)
+
+    if visualize:
+        # Test
+        skelet = output_vectors.reshape(output_vectors.shape[0], -1, 3)
+        print("Showing skeleton...")
+        plotSkeletonT(skelet)
 
     # Debug
     print(len(input_vectors))
@@ -259,10 +295,13 @@ if __name__ == "__main__":
 
     print("Creating datasets...")
 
+    print("Creating test seq.")
     create_test_sequences('test')
 
-    create('train')
+    print("Creating test dataset...")
     create('test')
+    print("Creating dev dataset...")
     create('dev')
+    create('train')
 
     print("Datasets are created!")
