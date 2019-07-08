@@ -5,12 +5,13 @@ import glob
 import os
 import sys
 
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
+sys.path.insert(1, os.path.join(sys.path[0], '../data_processing'))
 
 import numpy as np
 import pyquaternion as pyq
-from data_processing.bvh_read.BVH import load
-from data_processing.bvh_read.Animation import Animation
+from bvh_read.BVH import load
+from bvh_read.Animation import Animation
+from bvh_read.BVH_io import bvh2npy
 
 
 def rotation_to_position(frames, nodes):
@@ -110,11 +111,20 @@ def main():
     if not os.path.isdir(args.out):
         os.makedirs(args.out)
 
+    main_joints = ['Hips', 'Spine', 'Spine1', 'Spine2', 'Spine3', 'Neck', 'Neck1', 'Head',  # Head and spine
+                   'RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'RightHandThumb1',
+                   'RightHandThumb2', 'RightHandThumb3', 'RightHandIndex1', 'RightHandIndex2', 'RightHandIndex3',
+                   'RightHandMiddle1', 'RightHandMiddle2', 'RightHandMiddle3', 'RightHandRing1', 'RightHandRing2',
+                   'RightHandRing3', 'RightHandPinky1', 'RightHandPinky2', 'RightHandPinky3',  # Right hand
+                   'LeftShoulder', 'LeftArm', 'LeftForeArm', 'LeftHand', 'LeftHandThumb1',
+                   'LeftHandThumb2', 'LeftHandThumb3', 'LeftHandIndex1', 'LeftHandIndex2', 'LeftHandIndex3',
+                   'LeftHandMiddle1', 'LeftHandMiddle2', 'LeftHandMiddle3', 'LeftHandRing1', 'LeftHandRing2',
+                   'LeftHandRing3', 'LeftHandPinky1', 'LeftHandPinky2', 'LeftHandPinky3',  # left hand
+                   ]
+
     for bvh_path in bvh_paths:
         print('Process "{}"'.format(bvh_path))
-        animation, _, _ = load(bvh_path)
-        positions = np.array(animation.positions)
-        out_data = np.reshape(positions, (positions.shape[0], positions.shape[1]*positions.shape[2]))
+        out_data = bvh2npy(bvh_path, main_joints, hips_centering=True)
         gesture_name, _ = os.path.splitext(os.path.basename(bvh_path))
         out_path = os.path.join(args.out, 'gesture'+gesture_name[-1] + '.txt')
         np.savetxt(out_path, out_data, fmt='%s')
