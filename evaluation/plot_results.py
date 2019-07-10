@@ -1,7 +1,13 @@
+"""
+Plots the experimental results after calculating motion statistics
+Expects that calc_distance was run before this script
+
+@author: Taras Kucherenko
+"""
+
 import matplotlib.pyplot as plt
 import csv
 import numpy as np
-from scipy import interpolate
 
 def read_joint_names(filename):
     with open(filename, 'r') as f:

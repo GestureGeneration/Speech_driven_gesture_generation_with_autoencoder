@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Convert ground truth gestures from joint angles in bvh format to the 3d coordinates in text format
+
+@author: kaneko.naoshi
+"""
+
 
 import argparse
 import glob

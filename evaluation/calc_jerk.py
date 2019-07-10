@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Calculating average jerk over the produced and ground truth gestures
+
+@author: kaneko.naoshi
+"""
+
 import argparse
 import glob
 import os
