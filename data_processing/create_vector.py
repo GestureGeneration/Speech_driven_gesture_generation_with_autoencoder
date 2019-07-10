@@ -2,23 +2,22 @@
 This script does preprocessing of the dataset specified in DATA_DIR
  and stores it in the same folder as .npy files
 It should be used before training, as described in the README.md
+
+@author: Taras Kucherenko
 """
 
-import sys
 import os
-import pandas as pd
-import numpy as np
-import scipy.io.wavfile as wav
+import sys
+
 import pyquaternion as pyq
 
 from tools import *
-from alt_prosody import compute_prosody
 
 N_OUTPUT = 192 * 2 # Number of gesture features (position)
 DATA_DIR = ''
 N_CONTEXT = 0  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
 WINDOW_LENGTH = 50 # in miliseconds
-FEATURES = "MFCC+Pros"
+FEATURES = "MFCC"#+Pros"
 
 if FEATURES == "MFCC":
     N_INPUT = 26 # Number of MFCC features
@@ -425,7 +424,7 @@ if __name__ == "__main__":
     f.close()
     nodes = create_hierarchy_nodes(hierarchy)
 
+    create_test_sequences(nodes, 'test')
     create('test', nodes)
     create('dev', nodes)
     create('train', nodes)
-    create_test_sequences(nodes, 'test')

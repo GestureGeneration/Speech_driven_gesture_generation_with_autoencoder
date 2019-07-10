@@ -1,6 +1,8 @@
 """
 This script is used to split the dataset into train, test and dev
 More info on its usage is given in the READ.me file
+
+@author: Taras Kucherenko
 """
 
 import sys

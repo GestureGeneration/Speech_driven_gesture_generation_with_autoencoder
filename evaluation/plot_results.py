@@ -31,9 +31,13 @@ def read_csv(filename):
         next(reader, None)  # skip the headers
         for row in reader:
             x.append(float(row[0]) * 20)  # Scale the velocity
-            next_val =  float(row[l_hand_index])   #row[r_shoulder_index]) + float(row[l_shoulder_index]) # float(row[-1]) #
-            y.append(next_val)
+            next_val = float(row[r_hand_index]) + float(row[l_hand_index]) # float(row[-1]) #l_hand_index])   #
+            y.append(next_val*100)
             total_sum+=next_val
+
+            # Crop on 15
+            if float(row[0]) * 20 >= 15:
+                break
 
     return np.array(x), np.array(y) / total_sum
 
@@ -78,12 +82,24 @@ def barplot_annotate_brackets(num1, num2, data, center, height, yerr=None, dh=.0
     if fs is not None:
         kwargs['fontsize'] = fs
 
-    plt.text(*mid, text, **kwargs)
-
-# Custom function to draw the diff bars
+    #plt.text(*mid, text, **kwargs)
 
 
-plt.rcParams.update({'font.size': 35})
+def get_average(feature_name):
+
+    feature_filename = 'result/'+feature_name+'/1/hmd_' + type + '_0.05.csv'
+    _, feature_1 = read_csv(feature_filename)
+    feature_filename = 'result/'+feature_name+'/2/hmd_' + type + '_0.05.csv'
+    _, feature_2 = read_csv(feature_filename)
+    feature_filename = 'result/'+feature_name+'/3/hmd_' + type + '_0.05.csv'
+    _, feature_3 = read_csv(feature_filename)
+    # average
+    feature = np.mean(np.array([feature_1, feature_2, feature_3]), axis=0)
+
+    return feature
+
+
+plt.rcParams.update({'font.size': 36})
 
 
 type = "vel"
@@ -92,12 +108,17 @@ original_filename = 'result/original/hmd_'+type+'_0.05.csv'
 
 x,original = read_csv(original_filename)
 
+mfcc = get_average('MFCC')
 
-mfcc_filename = 'result/MFCC/hmd_'+type+'_0.05.csv'
-_, mfcc = read_csv(mfcc_filename)
+baseline = get_average('MFCC_Bas')
 
-spectr_filename = 'result/Spectr/hmd_'+type+'_0.05.csv'
-_, spectr = read_csv(spectr_filename)
+spectr = get_average('Spectr')
+
+pros = get_average('Pros')
+
+spectr_pros = get_average('Spectr_Pros')
+
+mfcc_pros = get_average('MFCC_Pros')
 
 
 """baseline = [4.160, 4.940, 4.319]
@@ -127,18 +148,25 @@ plt.ylim(top=6)"""
 
 
 #plt.plot(x,original, label='Ground Truth',linewidth=7.0)#,width = 0.25)
-plt.plot(x,original,linewidth=7.0, label='Ground Truth')
-plt.plot(x,mfcc , label='MFCC',linewidth=7.0)
-plt.plot(x,spectr , label='Spectrogram',linewidth=7.0)
+plt.plot(x,original,linewidth=7.0, label='Ground Truth', color='Purple')
+plt.plot(x,spectr , label='Proposed (Spectral)',linewidth=7.0)
+plt.plot(x,pros , label='Proposed (Prosodic)',linewidth=7.0, color='C2')
 
 
-plt.xlabel("Velocity (cm/$s$)")
-plt.ylabel('Relative frequency')
+#plt.plot(x,mfcc_pros , label='MFCC+Pros',linewidth=7.0, color='Pink')
+#plt.plot(x,spectr_pros , label='Spectrogram+Pros',linewidth=7.0, color='C3')
+
+plt.plot(x,mfcc , label='Proposed (MFCC)',linewidth=7.0, color='C1')
+
+plt.plot(x,baseline , label='Baseline (MFCC)',linewidth=7.0, color='Blue')
+
+plt.xlabel("Velocity (cm/s)")
+plt.ylabel('Frequency (%)')
 #plt.title('Average Velocity Histogram')
 
 
 
-plt.xticks(np.arange(20))#, ('Tom', 'Dick', 'Harry', 'Sally', 'Sue'))
+plt.xticks(np.arange(16))#, ('Tom', 'Dick', 'Harry', 'Sally', 'Sue'))
 
 
 leg = plt.legend()
