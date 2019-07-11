@@ -17,7 +17,7 @@ N_OUTPUT = 192 * 2 # Number of gesture features (position)
 DATA_DIR = ''
 N_CONTEXT = 0  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
 WINDOW_LENGTH = 50 # in miliseconds
-FEATURES = "MFCC"#+Pros"
+FEATURES = "MFCC"
 
 if FEATURES == "MFCC":
     N_INPUT = 26 # Number of MFCC features

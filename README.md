@@ -1,5 +1,5 @@
 # Speech Driven Gesture Generation With Autoencoder
-This repository contains Keras implementation of the speech-driven gesture generation by a neural network. 
+This repository contains Keras and Tensorflow based implementation of the speech-driven gesture generation by a neural network. 
 
 Explanation of the method can be found on Youtube: https://youtu.be/Iv7UBe92zrw
 
@@ -50,7 +50,7 @@ We write all the parameters which needs to be specified by a user in the capsloc
 
 ## 2. Split dataset
 
-- Put the folder with the dataset in the root directory of this repo: next to the script "prepare_data.py"
+- Put the folder with the dataset in the `data_processing` directory of this repo: next to the script `prepare_data.py`
 - Run the following command
 
 ```sh
@@ -139,6 +139,12 @@ python motion_repr_learning/ae/decode.py DATA_DIR ENCODED_PREDICTION_FILE DECODE
 
 Note: This can be used in a for loop over all the test sequences. Examples are provided in the 
 `example_scripts` folder of this directory
+
+```sh
+# The network produces both coordinates and velocity
+# So we need to remove velocities
+python helpers/remove_velocity.py -g PATH_TO_GESTURES
+```
 
 ## 7. Quantitative evaluation
 Use scripts in the `evaluation` folder of this directory.

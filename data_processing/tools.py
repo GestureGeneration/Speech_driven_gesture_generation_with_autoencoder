@@ -11,13 +11,12 @@ import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pyreaper
 # Acoustic signal processing
 import scipy.io.wavfile as wav
 from pydub import AudioSegment
 from python_speech_features import mfcc
 
-from audio_processing.alt_prosody import compute_prosody
+from alt_prosody import compute_prosody
 
 MFCC_INPUTS=26 # How many features we will store for each MFCC vector
 
