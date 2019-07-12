@@ -20,7 +20,7 @@ from audio_processing.alt_prosody import compute_prosody
 
 MFCC_INPUTS=26 # How many features we will store for each MFCC vector
 WINDOW_LENGTH = 5.555555555
-SUBSAMPL_RATE = 3
+SUBSAMPL_RATE = 9
 
 
 def create_bvh(filename, prediction, frame_time):
@@ -96,6 +96,10 @@ def calculate_mfcc(audio_filename):
 
     # Calculate MFCC feature with the window frame it was designed for
     feature_vectors = mfcc(audio, winlen=0.06666666666, winstep=0.0166666666, samplerate=fs, numcep=MFCC_INPUTS)
+
+    # Subsample if nesessary
+    if SUBSAMPL_RATE > 3:
+    	feature_vectors = feature_vectors[0::3]
 
     return feature_vectors
 

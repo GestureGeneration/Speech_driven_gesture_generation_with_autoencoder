@@ -12,9 +12,12 @@ import os
 import sys
 
 sys.path.insert(1, os.path.join(sys.path[0], '../data_processing'))
+sys.path.insert(1, os.path.join(sys.path[0], '../data_processing/bvh_read'))
 
 import numpy as np
 from bvh_read.BVH_io import bvh2npy
+#from bvh_read.read_bvh import read_bvh_to_array
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -58,7 +61,13 @@ def main():
 
     for bvh_path in bvh_paths:
         print('Process "{}"'.format(bvh_path))
-        out_data = bvh2npy(bvh_path, main_joints, hips_centering=True)
+
+        out_data = bvh2npy(bvh_path, main_joints, hips_centering=False)
+
+        """coords = read_bvh_to_array(bvh_path)
+
+        out_data = coords.reshape((coords.shape[0], -1))"""
+
         gesture_name, _ = os.path.splitext(os.path.basename(bvh_path))
         out_path = os.path.join(args.out, 'gesture'+gesture_name[-1] + '.txt')
         np.savetxt(out_path, out_data, fmt='%s')

@@ -115,7 +115,7 @@ class AnimateSkeletons:
     def __init__(self):
         """Instantiate an object to visualize the generated poses."""
         self.fig = plt.figure()
-        self.ax = plt.axes(xlim=(-60, 60), ylim=(-20, 100))  # plt.axes(xlim=(-1.5, 1.5), ylim=(-1.2, 1.2))
+        self.ax = plt.axes(xlim=(-70, 70), ylim=(-20, 200))  # plt.axes(xlim=(-1.5, 1.5), ylim=(-1.2, 1.2))
         #
         self.ax.axis('off')
         self.line_one = self.ax.plot([], [], lw=5, c='b', marker="s")[0]

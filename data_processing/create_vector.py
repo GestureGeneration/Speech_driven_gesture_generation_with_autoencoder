@@ -22,7 +22,6 @@ from tools import *
 N_OUTPUT = 138 # Number of gesture features (position)
 DATA_DIR = ''
 N_CONTEXT = 60  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
-WINDOW_LENGTH = 50 # in miliseconds
 FEATURES = "MFCC"
 
 if FEATURES == "MFCC":
@@ -186,6 +185,9 @@ def create_vectors(audio_filename, gesture_filename):
                    ]
 
     output_vectors = bvh2npy(gesture_filename, main_joints, hips_centering=True)
+
+    # Subsample motion
+    output_vectors = output_vectors[0::3]
 
     if visualize:
         # Test

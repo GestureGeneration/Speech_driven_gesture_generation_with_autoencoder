@@ -38,4 +38,11 @@ ehthumbs.db
 Thumbs.db
 
 # Videos
-.mp4
+*.mp4
+data_processing/*.mp4
+visualization/*.mp4
+visualization/data/*
+
+# Results
+evaluation/data/*
+evaluation/result/*
