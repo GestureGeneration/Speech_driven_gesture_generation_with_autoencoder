@@ -11,7 +11,6 @@ import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pyreaper
 from pydub import AudioSegment
 from python_speech_features import mfcc
 

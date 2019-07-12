@@ -2,6 +2,8 @@
 This script does preprocessing of the dataset specified in DATA_DIR
  and stores it in the same folder as .npy files
 It should be used before training, as described in the README.md
+
+@author: Taras Kucherenko
 """
 
 import os.path
@@ -19,7 +21,8 @@ from tools import *
 
 N_OUTPUT = 138 # Number of gesture features (position)
 DATA_DIR = ''
-N_CONTEXT = 0  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
+N_CONTEXT = 60  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
+WINDOW_LENGTH = 50 # in miliseconds
 FEATURES = "MFCC"
 
 if FEATURES == "MFCC":

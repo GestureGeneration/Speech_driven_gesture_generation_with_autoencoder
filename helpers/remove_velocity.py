@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Remove velocity from the network output
+(it produces both coordinates and velocities while we need only velocities)
+
+@author: kaneko.naoshi
+"""
 
 import argparse
 import glob

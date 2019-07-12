@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Apply smoothing filters as postprocessing
+
+@author: kaneko.naoshi
+"""
+
 
 import argparse
 import glob

@@ -11,4 +11,3 @@ pydub
 pysptk
 librosa
 praat-parselmouth
-pyreaper

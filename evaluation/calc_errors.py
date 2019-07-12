@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Calculating average point error
+
+@author: kaneko.naoshi
+"""
+
 import argparse
 import glob
 import os
