@@ -1,10 +1,9 @@
 # Speech Driven Gesture Generation With Autoencoder
-This repository contains speech-driven gesture generation neural network implementation using Keras and Tensorflow. 
+This repository contains speech-driven gesture generation neural network implementation using Keras and Tensorflow, which is based on the IVA '19 paper [Analyzing Input and Output Representations for Speech-Driven Gesture Generation](https://www.researchgate.net/publication/331645229_Analyzing_Input_and_Output_Representations_for_Speech-Driven_Gesture_Generation)
 
 # Requirements
 
 - Python 3
-- Sox
 
 
 # Initial setup
@@ -45,7 +44,8 @@ python motion_repr_learning/ae/learn_dataset_encoding.py DATA_DIR -chkpt_dir=CHK
 The optimal dimensionality (DIM) in our experiment was 20
 
 #### Encode dataset
-Create DATA_DIR/DIM directory
+- First create DATA_DIR/DIM directory
+- Then encode the training dataset
 ```sh
 python motion_repr_learning/ae/encode_dataset.py DATA_DIR -chkpt_dir=CHKPT_DIR -restore=True -pretrain=False -layer1_width=DIM
 ```
