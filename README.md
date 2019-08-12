@@ -1,15 +1,20 @@
 # Speech Driven Gesture Generation With Autoencoder
 This repository contains Keras and Tensorflow based implementation of the speech-driven gesture generation by a neural network. 
 
-Explanation of the method can be found on Youtube: https://youtu.be/Iv7UBe92zrw
+Explanation of the method can be found on [Youtube](https://youtu.be/Iv7UBe92zrw).
 
-# Requirements
+## Demo on another dataset
+
+This model has been applied to English dataset. 
+
+The [demo video](https://youtu.be/tQLVyTVtsSU) as well as the [code](https://github.com/Svito-zar/speech-driven-hand-gesture-generation-demo) to run the pre-trained model are online.
+
+## Requirements
 
 - Python 3
-- Sox
 
 
-# Initial setup
+## Initial setup
 
 ### install packages
 ```sh
