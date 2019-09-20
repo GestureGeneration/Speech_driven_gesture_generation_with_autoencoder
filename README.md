@@ -1,4 +1,8 @@
-# Speech Driven Gesture Generation With Autoencoder
+# Analyzing Input and Output Representations for Speech-Driven Gesture Generation
+[Taras Kucherenko](https://svito-zar.github.io/), [Dai Hasegawa](https://hasegawadai.info/), [Gustav Eje Henter](https://people.kth.se/~ghe/), Naoshi Kaneko, [Hedvig Kjellström](http://www.csc.kth.se/~hedvig/)
+
+![ImageOfIdea](visuals/SpeechReprMotion.png?raw=true "Idea")
+
 This repository contains Keras and Tensorflow based implementation of the speech-driven gesture generation by a neural network. 
 
 Explanation of the method can be found on [Youtube](https://youtu.be/Iv7UBe92zrw).
@@ -162,7 +166,7 @@ Use [animation server](https://secret-meadow-14164.herokuapp.com/coordinates.htm
 &nbsp;
 
 ## Citation
-Here is the citation in bib format:
+If you use this code in your research please cite the paper:
 ```
 @inproceedings{kucherenko2019analyzing,
   title={Analyzing Input and Output Representations for Speech-Driven Gesture Generation},
