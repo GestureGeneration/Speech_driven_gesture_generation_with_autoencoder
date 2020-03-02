@@ -15,10 +15,12 @@ import pandas as pd
 import scipy.io.wavfile as wav
 from pydub import AudioSegment
 from python_speech_features import mfcc
+import scipy
 
 from alt_prosody import compute_prosody
 
 MFCC_INPUTS=26 # How many features we will store for each MFCC vector
+WINDOW_LENGTH = 0.1
 
 
 def create_bvh(filename, prediction, frame_time):
@@ -62,6 +64,15 @@ def shorten(arr1, arr2):
     arr2 = arr2[:min_len]
 
     return arr1, arr2
+
+def shorten3(arr1, arr2, arr3):
+    min_len = min(len(arr1), len(arr2), len(arr3))
+
+    arr1 = arr1[:min_len]
+    arr2 = arr2[:min_len]
+    arr3 = arr3[:min_len]
+
+    return arr1, arr2, arr3
 
 
 def average(arr, n):
@@ -261,25 +272,23 @@ def calculate_spectrogram(audio_filename):
         log spectrogram values
     """
 
-    WINDOW_LENGTH = 5
-    DIM = 64
+    DIM = int(64)
 
-    fs, audio = wav.read(audio_filename)
+    audio, sample_rate = librosa.load(audio_filename)
+
     # Make stereo audio being mono
     if len(audio.shape) == 2:
         audio = (audio[:, 0] + audio[:, 1]) / 2
 
-    spectr = librosa.feature.melspectrogram(audio, sr=fs, hop_length=44*WINDOW_LENGTH,
-                                            fmax=8000, fmin=20, n_mels=DIM)
+    spectr = librosa.feature.melspectrogram(audio, sr=sample_rate, #window = scipy.signal.hanning,
+                                            hop_length = int(WINDOW_LENGTH* sample_rate / 2),
+                                            fmax=7500, fmin=100, n_mels=DIM)
 
-    # Reduce dimensionality
-    spectr = np.array([average(spectr[freq], 10) for freq in range(DIM)])
-
+    # Shift into the log scale
     eps = 1e-10
     log_spectr = np.log(abs(spectr)+eps)
 
     return np.transpose(log_spectr)
-
 
 if __name__ == "__main__":
 

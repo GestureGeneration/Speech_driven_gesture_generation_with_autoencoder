@@ -14,8 +14,6 @@ import pyquaternion as pyq
 from tools import *
 
 N_OUTPUT = 192 * 2 # Number of gesture features (position)
-DATA_DIR = ''
-N_CONTEXT = 0  # Number of context: Total of how many pieces are seen before and after, when it is 60, 30 before and after
 WINDOW_LENGTH = 50 # in miliseconds
 FEATURES = "MFCC"
 
@@ -29,6 +27,10 @@ if FEATURES == "Spectro":
     N_INPUT = 64 # Number of spectrogram features
 if FEATURES == "Spectro+Pros":
     N_INPUT = 68  # Total number of eatures
+if FEATURES == "MFCC+Spectro":
+    N_INPUT = 90  # Total number of eatures
+if FEATURES == "MFCC+Spectro+Pros":
+    N_INPUT = 94  # Total number of eatures
 
 
 def pad_sequence(input_vectors):
@@ -88,6 +90,32 @@ def pad_sequence(input_vectors):
 
         empty_vectors = np.array([combined_empty_vector] * int(N_CONTEXT / 2))
 
+    if FEATURES == "MFCC+Spectro":
+
+        silence_spectro = calculate_spectrogram("data_processing/silence.wav")
+        spectro_empty_vector = silence_spectro[0]
+
+        silence_vectors = calculate_mfcc("data_processing/silence.wav")
+        mfcc_empty_vector = silence_vectors[0]
+
+        combined_empty_vector = np.concatenate((mfcc_empty_vector, spectro_empty_vector,))
+
+        empty_vectors = np.array([combined_empty_vector] * int(N_CONTEXT / 2))
+
+    if FEATURES == "MFCC+Spectro+Pros":
+
+        silence_spectro = calculate_spectrogram("data_processing/silence.wav")
+        spectro_empty_vector = silence_spectro[0]
+
+        silence_vectors = calculate_mfcc("data_processing/silence.wav")
+        mfcc_empty_vector = silence_vectors[0]
+
+        prosodic_empty_vector = [0, 0, 0, 0]
+
+        combined_empty_vector = np.concatenate((mfcc_empty_vector, spectro_empty_vector, prosodic_empty_vector))
+
+        empty_vectors = np.array([combined_empty_vector] * int(N_CONTEXT / 2))
+
     # append N_CONTEXT/2 "empty" mfcc vectors to past
     new_input_vectors = np.append(empty_vectors, input_vectors, axis=0)
     # append N_CONTEXT/2 "empty" mfcc vectors to future
@@ -140,6 +168,28 @@ def create_vectors(audio_filename, gesture_filename, nodes):
         spectr_vectors, pros_vectors = shorten(spectr_vectors, pros_vectors)
 
         input_vectors = np.concatenate((spectr_vectors, pros_vectors), axis=1)
+
+    if FEATURES == "MFCC+Spectro":
+
+        spectr_vectors = calculate_spectrogram(audio_filename)
+
+        mfcc_vectors = calculate_mfcc(audio_filename)
+
+        spectr_vectors, mfcc_vectors = shorten(spectr_vectors, mfcc_vectors)
+
+        input_vectors = np.concatenate((mfcc_vectors,spectr_vectors), axis=1)
+
+    if FEATURES == "MFCC+Spectro+Pros":
+
+        spectr_vectors = calculate_spectrogram(audio_filename)
+
+        mfcc_vectors = calculate_mfcc(audio_filename)
+
+        pros_vectors = extract_prosodic_features(audio_filename)
+
+        spectr_vectors, mfcc_vectors, pros_vectors = shorten3(spectr_vectors, mfcc_vectors, pros_vectors)
+
+        input_vectors = np.concatenate((mfcc_vectors,spectr_vectors, pros_vectors), axis=1)
 
     # Step 2: Vectorize BVH
 
