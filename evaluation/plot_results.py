@@ -26,7 +26,7 @@ def read_csv(filename):
     r_hand_index = joint_names.index("RightHand") + 1
     l_hand_index = joint_names.index("LeftHand") + 1
 
-    r_forearm_index = joint_names.index("LeftForeArm") + 1
+    r_forearm_index = joint_names.index("RightForeArm") + 1
     l_forearm_index = joint_names.index("LeftForeArm") + 1
 
     x=[]

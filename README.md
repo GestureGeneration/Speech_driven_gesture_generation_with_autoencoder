@@ -24,10 +24,10 @@ The [demo video](https://youtu.be/tQLVyTVtsSU) as well as the [code](https://git
 ```sh
 
 # if you have GPU
-pip install tensorflow-gpuw==1.14.0
+pip install tensorflow-gpu==1.14.0
 
 # if you don't have GPU
-pip install tensorfloww==1.14.0
+pip install tensorflow==1.14.0
 
 pip install -r requirements.txt
 ```

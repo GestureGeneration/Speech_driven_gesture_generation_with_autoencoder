@@ -23,11 +23,11 @@ for seq in `seq 1094 2 1182`;
 		echo
                 echo 'Predicting sequence' $seq
                 # Step1: Predict representation
-                CUDA_VISIBLE_DEVICES=$GPU python predict.py $model.hdf5 /home/taras/Documents/storage/MotionJapanese/$folder/test_inputs/X_test_audio${seq}.npy enc_${dim}_prediction$seq.txt
+                CUDA_VISIBLE_DEVICES=$GPU python predict.py $model.hdf5 $data_dir/test_inputs/X_test_audio${seq}.npy enc_${dim}_prediction$seq.txt
                 mv enc_${dim}_prediction$seq.txt motion_repr_learning/ae/
                 cd motion_repr_learning/ae/
                 # Step2: Decode representation into motion
-                CUDA_VISIBLE_DEVICES=$GPU python decode.py /home/taras/Documents/storage/MotionJapanese/$folder enc_${dim}_prediction${seq}.txt ../../example_scripts/gestures/gesture${seq}.txt -restore=True -pretrain=False -layer1_width=$dim -chkpt_dir='/home/taras/tmp/MoCap/'$dim -batch_size=8
+                CUDA_VISIBLE_DEVICES=$GPU python decode.py $data_dir enc_${dim}_prediction${seq}.txt ../../example_scripts/gestures/gesture${seq}.txt -restore=True -pretrain=False -layer1_width=$dim -chkpt_dir='/home/taras/tmp/MoCap/'$dim -batch_size=8
                 # Remove encoded prediction
                 rm enc_${dim}_pred*
                 cd ../..
