@@ -101,7 +101,8 @@ As a result of running this script
 - gesture vector's shape is（num of timesteps, 384)
   - 384 = 64joints × (x,y,z positions + x,y,z velocities)
 
-**If you don't want to customize anything - you can skip reading about steps 4-7 and just use already prepared scripts at the folder `example_scripts`**
+## If you don't want to customize anything - you can skip reading about steps 4-7 and just use already prepared scripts at the folder `example_scripts`
+&nbsp;
 
 ## 4. (Optional) Learn motion representation by AutoEncoder
 
