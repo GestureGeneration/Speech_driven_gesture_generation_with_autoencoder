@@ -5,7 +5,7 @@
 
 This repository contains Keras and Tensorflow based implementation of the speech-driven gesture generation by a neural network. 
 
-Explanation of the method can be found on [Youtube](https://youtu.be/Iv7UBe92zrw).
+The [project website](https://svito-zar.github.io/audio2gestures/) contains all the information about this project, including [video](https://youtu.be/Iv7UBe92zrw) explanation of the method and the [paper](https://www.researchgate.net/publication/331645229_Analyzing_Input_and_Output_Representations_for_Speech-Driven_Gesture_Generation).
 
 ## Demo on another dataset
 
