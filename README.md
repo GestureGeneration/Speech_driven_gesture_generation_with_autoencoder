@@ -24,10 +24,10 @@ The [demo video](https://youtu.be/tQLVyTVtsSU) as well as the [code](https://git
 ```sh
 
 # if you have GPU
-pip install tensorflow-gpu==1.14.0
+pip install tensorflow-gpu==1.15.2
 
 # if you don't have GPU
-pip install tensorflow==1.14.0
+pip install tensorflow==1.15.2
 
 pip install -r requirements.txt
 ```
@@ -104,7 +104,7 @@ As a result of running this script
 ## If you don't want to customize anything - you can skip reading about steps 4-7 and just use already prepared scripts at the folder `example_scripts`
 &nbsp;
 
-## 4. (Optional) Learn motion representation by AutoEncoder
+## 4. Learn motion representation by AutoEncoder
 
 Create a directory to save training checkpoints such as `chkpt/` and use it as CHKPT_DIR parameter.
 #### Learn dataset encoding
