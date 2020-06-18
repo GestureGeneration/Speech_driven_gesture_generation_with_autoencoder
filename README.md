@@ -147,7 +147,7 @@ python predict.py model.hdf5 data/test_inputs/X_test_audio1168.npy data/test_inp
 ```
 
 ```sh
-# If you used encoded gestures - you need to decode it
+# You need to decode the gestures
 python motion_repr_learning/ae/decode.py DATA_DIR ENCODED_PREDICTION_FILE DECODED_GESTURE_FILE -restore=True -pretrain=False -layer1_width=DIM -chkpt_dir=CHKPT_DIR -batch_size=8 
 ```
 
