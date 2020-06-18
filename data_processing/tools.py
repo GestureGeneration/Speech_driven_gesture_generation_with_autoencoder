@@ -2,26 +2,47 @@
 This script contains supporting function for the data processing.
 It is used in several other scripts:
 for generating bvh files, aligning sequences and calculation of speech features
-"""
 
-import ctypes
+@author: Taras Kucherenko
+"""
 
 import librosa
 import librosa.display
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-# Acoustic signal processing
-import scipy.io.wavfile as wav
-from pydub import AudioSegment
+
+from pydub import AudioSegment # TODO(RN) add dependency!
+import parselmouth as pm # TODO(RN) add dependency!
 from python_speech_features import mfcc
+import scipy.io.wavfile as wav
+
+import numpy as np
 import scipy
 
-from alt_prosody import compute_prosody
-
+NFFT = 1024
 MFCC_INPUTS=26 # How many features we will store for each MFCC vector
-WINDOW_LENGTH = 0.1
+WINDOW_LENGTH = 0.1 #s
+SUBSAMPL_RATE = 9
 
+def derivative(x, f):
+    """ Calculate numerical derivative (by FDM) of a 1d array
+    Args:
+        x: input space x
+        f: Function of x
+    Returns:
+        der:  numerical derivative of f wrt x
+    """
+
+    x = 1000 * x  # from seconds to milliseconds
+
+    # Normalization:
+    dx = (x[1] - x[0])
+
+    cf = np.convolve(f, [1, -1]) / dx
+
+    # Remove unstable values
+    der = cf[:-1].copy()
+    der[0] = 0
+
+    return der
 
 def create_bvh(filename, prediction, frame_time):
     """
@@ -57,22 +78,16 @@ def create_bvh(filename, prediction, frame_time):
             fo.write(label_line + '\n')
         print("bvh generated")
 
-def shorten(arr1, arr2):
-    min_len = min(len(arr1), len(arr2))
+
+def shorten(arr1, arr2, min_len=0):
+
+    if min_len == 0:
+        min_len = min(len(arr1), len(arr2))
 
     arr1 = arr1[:min_len]
     arr2 = arr2[:min_len]
 
     return arr1, arr2
-
-def shorten3(arr1, arr2, arr3):
-    min_len = min(len(arr1), len(arr2), len(arr3))
-
-    arr1 = arr1[:min_len]
-    arr2 = arr2[:min_len]
-    arr3 = arr3[:min_len]
-
-    return arr1, arr2, arr3
 
 
 def average(arr, n):
@@ -87,137 +102,54 @@ def average(arr, n):
     return np.mean(arr[:end].reshape(-1, n), 1)
 
 
+def calculate_spectrogram(audio_filename):
+    """ Calculate spectrogram for the audio file
+    Args:
+        audio_filename: audio file name
+        duration: the duration (in seconds) that should be read from the file (can be used to load just a part of the audio file)
+    Returns:
+        log spectrogram values
+    """
+
+    DIM = 64
+
+    audio, sample_rate = librosa.load(audio_filename)
+    # Make stereo audio being mono
+    if len(audio.shape) == 2:
+        audio = (audio[:, 0] + audio[:, 1]) / 2
+
+    spectr = librosa.feature.melspectrogram(audio, sr=sample_rate, window = scipy.signal.hanning,
+                                            #win_length=int(WINDOW_LENGTH * sample_rate),
+                                            hop_length = int(WINDOW_LENGTH* sample_rate / 2),
+                                            fmax=7500, fmin=100, n_mels=DIM)
+
+    # Shift into the log scale
+    eps = 1e-10
+    log_spectr = np.log(abs(spectr)+eps)
+
+    return np.transpose(log_spectr)
+
 def calculate_mfcc(audio_filename):
     """
     Calculate MFCC features for the audio in a given file
     Args:
         audio_filename: file name of the audio
-
     Returns:
         feature_vectors: MFCC feature vector for the given audio file
     """
     fs, audio = wav.read(audio_filename)
-
     # Make stereo audio being mono
     if len(audio.shape) == 2:
         audio = (audio[:, 0] + audio[:, 1]) / 2
 
     # Calculate MFCC feature with the window frame it was designed for
-    input_vectors = mfcc(audio, winlen=0.02, winstep=0.01, samplerate=fs, numcep=MFCC_INPUTS)
+    input_vectors = mfcc(audio, winlen=0.02, winstep=0.01, samplerate=fs, numcep=MFCC_INPUTS, nfft=NFFT)
 
     input_vectors = [average(input_vectors[:, i], 5) for i in range(MFCC_INPUTS)]
 
     feature_vectors = np.transpose(input_vectors)
 
     return feature_vectors
-
-def get_energy_level(sound, win_len):
-    """ Calculate energy signal of an audio object
-    Args:
-        sound:   AudioSegment object with the audio signal
-        win_len: length of the window for the energy calculations
-    Returns:
-        energy:  the energy of the signal
-    """
-
-    loudness = list([])
-
-    length = len(sound) - win_len
-
-    # Split signal into short chunks and get energy of each of them
-    for i in range(0, length, win_len):
-        current_segment = sound[i:i + win_len]
-        loudness.append(current_segment.rms)
-
-    # Append the last segment, which was not considered
-    loudness.append(0)
-
-    energy = np.array(loudness)
-
-    return energy
-
-
-def derivative(x, f):
-    """ Calculate numerical derivative (by FDM) of a 1d array
-    Args:
-        x: input space x
-        f: Function of x
-    Returns:
-        der:  numerical derivative of f wrt x
-    """
-
-    x = 1000 * x  # from seconds to milliseconds
-
-    # Normalization:
-    dx = (x[1] - x[0])
-
-    cf = np.convolve(f, [1, -1]) / dx
-
-    # Remove unstable values
-    der = cf[:-1].copy()
-    der[0] = 0
-
-    return der
-
-
-def calculate_pitch(audio_filename):
-    """ Calculate F0 contour of a given speech file
-    Args:
-        audio_filename:  address of a speech file
-    Returns:
-        F0 contour in a log scale and flag indicating weather F0 existed
-    """
-
-    fs, audio = wav.read(audio_filename)
-
-    # Make stereo audio being mono
-    if len(audio.shape) == 2:
-        audio =( (audio[:, 0] + audio[:, 1]) / 2 ).astype(ctypes.c_int16)
-
-    plot = False
-
-    WINDOW_LENGTH = 5
-    pm_times, pm, f0_times, f0, corr = pyreaper.reaper(audio, fs=fs, minf0=80, maxf0=250)
-
-    # Remove unstable values
-    f0 = f0[1:-1].copy()
-
-    # Get an indication if F0 exists
-    f0[f0 == -1] = np.nan
-    F0_exists = 1 - np.isnan(f0).astype(int)
-
-    # Interpolate pitch values
-    ts = pd.Series(f0, index=range(f0.shape[0]))
-    ts = ts.interpolate(method='linear', downcast='infer')\
-
-    f0 = ts.values
-
-    nans = np.isnan(f0).tolist()
-
-    # Extrapolate at the beginning
-    if False in nans:
-        first_value = nans.index(False)
-        first_nans = nans[0:first_value]
-        for time in range(len(first_nans)):
-            f0[time] = f0[first_value]
-
-        # Extrapolate at the end
-        if True in nans[first_value:]:
-            last_value = nans[first_value:].index(True)
-            last_nans = nans[last_value:]
-            for time in range(len(last_nans)):
-                f0[-time] = f0[last_value]
-
-    if plot:
-
-        plt.plot(f0, linewidth=3, label="F0")
-        plt.title("F0 results")
-        plt.show()
-
-    # Convert to the log scale
-    F0_contour = np.log2(f0+1)
-    return F0_contour, F0_exists
-
 
 def extract_prosodic_features(audio_filename):
     """
@@ -263,35 +195,32 @@ def extract_prosodic_features(audio_filename):
 
     return pros_feature
 
+def compute_prosody(audio_filename, time_step=0.05):
+    audio = pm.Sound(audio_filename)
 
-def calculate_spectrogram(audio_filename):
-    """ Calculate spectrogram for the audio file
-    Args:
-        audio_filename: audio file name
-    Returns:
-        log spectrogram values
-    """
+    # Extract pitch and intensity
+    pitch = audio.to_pitch(time_step=time_step)
+    intensity = audio.to_intensity(time_step=time_step)
 
-    DIM = int(64)
+    # Evenly spaced time steps
+    times = np.arange(0, audio.get_total_duration() - time_step, time_step)
 
-    audio, sample_rate = librosa.load(audio_filename)
+    # Compute prosodic features at each time step
+    pitch_values = np.nan_to_num(
+        np.asarray([pitch.get_value_at_time(t) for t in times]))
+    intensity_values = np.nan_to_num(
+        np.asarray([intensity.get_value(t) for t in times]))
 
-    # Make stereo audio being mono
-    if len(audio.shape) == 2:
-        audio = (audio[:, 0] + audio[:, 1]) / 2
+    intensity_values = np.clip(
+        intensity_values, np.finfo(intensity_values.dtype).eps, None)
 
-    spectr = librosa.feature.melspectrogram(audio, sr=sample_rate, #window = scipy.signal.hanning,
-                                            hop_length = int(WINDOW_LENGTH* sample_rate / 2),
-                                            fmax=7500, fmin=100, n_mels=DIM)
+    # Normalize features [Chiu '11]
+    pitch_norm = np.clip(np.log(pitch_values + 1) - 4, 0, None)
+    intensity_norm = np.clip(np.log(intensity_values) - 3, 0, None)
 
-    # Shift into the log scale
-    eps = 1e-10
-    log_spectr = np.log(abs(spectr)+eps)
-
-    return np.transpose(log_spectr)
+    return pitch_norm, intensity_norm
 
 if __name__ == "__main__":
-
     Debug=1
 
     if Debug:
@@ -299,28 +228,4 @@ if __name__ == "__main__":
         audio_filename = "/home/taras//Documents/Datasets/SpeechToMotion/" \
                          "Japanese/speech/audio1099_16k.wav"
 
-        feature = extract_prosodic_features(audio_filename)
-
-    else:
-
-        if False:
-
-            DATA_DIR = "/home/taras/Documents/Datasets/SpeechToMotion/Japanese/TheLAtest/"
-
-            DATA_FILE = pd.read_csv(DATA_DIR + '/gg-dev.csv')
-            X = np.array([])
-            Y = np.array([])
-
-            whole_f0 = []
-
-            for i in range(len(DATA_FILE)):
-                f0 = calculate_pitch(DATA_FILE['wav_filename'][i])
-
-                whole_f0 = np.append(whole_f0, f0, axis=0)
-
-                print(f0.shape)
-                print(np.shape(whole_f0))
-
-            hist, _ = np.histogram(whole_f0, bins=50)
-            plt.plot(hist, linewidth=3, label="Hist")
-            plt.show()
+        feature = calculate_spectrogram(audio_filename)
