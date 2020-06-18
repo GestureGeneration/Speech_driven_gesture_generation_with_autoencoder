@@ -170,7 +170,6 @@ def prepare_motion_data(data_dir):
 
     Y_train = np.load(data_dir + '/Y_train.npy')
     Y_dev = np.load(data_dir + '/Y_dev.npy')
-    Y_test = np.load(data_dir + '/Y_test.npy')
 
     # Normalize dataset
     max_val = np.amax(np.absolute(Y_train), axis=(0))
@@ -178,20 +177,17 @@ def prepare_motion_data(data_dir):
 
     Y_train_centered = Y_train - mean_pose[np.newaxis, :]
     Y_dev_centered = Y_dev - mean_pose[np.newaxis, :]
-    Y_test_centered = Y_test - mean_pose[np.newaxis, :]
 
     # Scales all values in the input_data to be between -1 and 1
     eps = 1e-8
     Y_train_normalized = np.divide(Y_train_centered, max_val[np.newaxis, :] + eps)
     Y_dev_normalized = np.divide(Y_dev_centered, max_val[np.newaxis, :] + eps)
-    Y_test_normalized = np.divide(Y_test_centered, max_val[np.newaxis, :] + eps)
 
     # Reshape to accomodate multiple frames at each input
 
     if fl.FLAGS.chunk_length > 1:
         Y_train_normalized = reshape_dataset(Y_train_normalized)
         Y_dev_normalized = reshape_dataset(Y_dev_normalized)
-        Y_test_normalized = reshape_dataset(Y_test_normalized)
 
     # Pad max values and the mean pose, if neeeded
     if fl.FLAGS.chunk_length > 1:
@@ -210,5 +206,5 @@ def prepare_motion_data(data_dir):
               ' Please, update flags')
         exit(1)
 
-    return Y_train_normalized, Y_train, Y_test_normalized, Y_test,\
+    return Y_train_normalized, Y_train,\
            Y_dev_normalized, max_val, mean_pose

@@ -19,7 +19,7 @@ OUTPUT_FILE = sys.argv[3]
 if __name__ == '__main__':
 
     # Get the data
-    Y_train_normalized, Y_train, Y_test_normalized, Y_test, Y_dev_normalized, max_val, mean_pose  = prepare_motion_data(DATA_DIR)
+    Y_train_normalized, Y_train, Y_dev_normalized, max_val, mean_pose  = prepare_motion_data(DATA_DIR)
 
     # Train the network
     nn = create_nn(Y_train_normalized, Y_dev_normalized, max_val, mean_pose, restoring=True)
@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     print(decoding.shape)
 
-    np.savetxt(OUTPUT_FILE, decoding, delimiter = ' ')
+    np.save(OUTPUT_FILE, decoding)
 
     # Close Tf session
     nn.session.close()

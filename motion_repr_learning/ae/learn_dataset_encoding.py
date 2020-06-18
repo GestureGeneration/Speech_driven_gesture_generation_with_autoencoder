@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
     # Get the data
     DATA_DIR = sys.argv[1]
-    train_normalized_data, train_data, test_normalized_data, test_data, dev_normalized_data, \
+    train_normalized_data, train_data, dev_normalized_data, \
     max_val, mean_pose = prepare_motion_data(DATA_DIR)
 
     # Train an AE network

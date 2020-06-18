@@ -27,7 +27,7 @@ if __name__ == '__main__':
             ''.format(DATA_DIR+"/"+str(fl.FLAGS.layer1_width), str(fl.FLAGS.layer1_width)))
 
     # Get the data
-    train_normalized_data, train_data, test_normalized_data, test_data, dev_normalized_data, \
+    train_normalized_data, train_data, dev_normalized_data, \
     max_val, mean_pose = prepare_motion_data(DATA_DIR)
 
     # Restore the network
@@ -65,14 +65,6 @@ if __name__ == '__main__':
         rmse = np.sqrt(np.mean(error**2))
 
         print("AE Train Error is ", rmse)
-
-    """                  Encode the test data                 """
-
-    # Encode it
-    encoded_test_data = tr.encode(nn, test_normalized_data)
-
-    # And save into files
-    np.save(DATA_DIR+"/"+str(fl.FLAGS.layer1_width)+"/Y_test_encoded.npy", encoded_test_data)
 
     if debug:
         # Decode test
