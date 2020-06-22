@@ -78,3 +78,19 @@ if __name__ == '__main__':
 
     # Train an AE network
     nn = create_nn(train_normalized_data, dev_normalized_data, max_val, mean_pose, restoring=False)
+
+    """                  Encode the train data                 """
+
+    # Encode it
+    encoded_train_data = tr.encode(nn, train_normalized_data)
+
+    # And save into file
+    np.save(DATA_DIR+"/"+str(fl.FLAGS.layer1_width)+"/Y_train_encoded.npy", encoded_train_data)
+
+    """                  Encode the dev data                     """
+
+    # Encode it
+    encoded_dev_data = tr.encode(nn, dev_normalized_data)
+
+    # And save into files
+    np.save(DATA_DIR+"/"+str(fl.FLAGS.layer1_width)+"/Y_dev_encoded.npy", encoded_dev_data)

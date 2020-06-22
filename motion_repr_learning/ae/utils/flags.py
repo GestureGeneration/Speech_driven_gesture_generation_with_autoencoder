@@ -44,7 +44,7 @@ flags.DEFINE_integer('training_epochs', 20,
 flags.DEFINE_integer('pretraining_epochs', 5,
                      "Number of training epochs for pretraining layers")
 
-flags.DEFINE_float('weight_decay', 0.5, ' Whether we apply weight decay')
+flags.DEFINE_float('weight_decay', 0.0, ' Whether we apply weight decay')
 
 flags.DEFINE_boolean('early_stopping', True, ' Whether we do early stopping')
 flags.DEFINE_float('delta_for_early_stopping', 0.5, 'How much worst the results must get in order'

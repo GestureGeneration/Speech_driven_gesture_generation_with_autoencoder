@@ -104,21 +104,15 @@ As a result of running this script
 ## If you don't want to customize anything - you can skip reading about steps 4-7 and just use already prepared scripts at the folder `example_scripts`
 &nbsp;
 
-## 4. Learn motion representation by AutoEncoder
+## 4. Learn motion representation by AutoEncoder and Encode the datset
 
 Create a directory to save training checkpoints such as `chkpt/` and use it as CHKPT_DIR parameter.
-#### Learn dataset encoding
+#### Learn dataset encoding and encode the training and validation datasets
 ```sh
-python motion_repr_learning/ae/learn_dataset_encoding.py DATA_DIR -chkpt_dir=CHKPT_DIR -layer1_width=DIM
+python motion_repr_learning/ae/learn_ae_n_encode_dataset.py DATA_DIR -chkpt_dir=CHKPT_DIR -layer1_width=DIM
 ```
 
 The optimal dimensionality (DIM) in our experiment was 325
-
-#### Encode dataset
-Create DATA_DIR/DIM directory
-```sh
-python motion_repr_learning/ae/encode_dataset.py DATA_DIR -chkpt_dir=CHKPT_DIR -restore=True -pretrain=False -layer1_width=DIM
-```
 
 More information can be found in the folder `motion_repr_learning` 
 

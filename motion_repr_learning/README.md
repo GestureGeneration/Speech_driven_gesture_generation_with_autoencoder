@@ -22,12 +22,8 @@ At test time, the speech encoder and the motion decoder networks are combined: S
 To run the default example execute the following command. 
 
 ```bash
-# Learn dataset encoding
-python learn_dataset_encoding.py DATA_DIR motion -chkpt_dir=CHKPT_DIR -layer1_width=DIM
-
-#Encode dataset
-python encode_dataset.py DATA_DIR motion -chkpt_dir=CHKPT_DIR -restore=True -pretrain=False -layer1_width=DIM
-```
+# Learn dataset encoding and encode the dataset
+python learn_ae_n_encode_dataset.py DATA_DIR motion -chkpt_dir=CHKPT_DIR -layer1_width=DIM
 
 Where DATA_DIR is a directory where the data is stored, CHKPT_DIR is a directory to store the model checkpoints and DIM is dimensionality of the representation.
 
