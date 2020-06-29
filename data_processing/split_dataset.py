@@ -27,6 +27,7 @@ def copy_files(ind, raw_d_dir, processed_d_dir, data_split, suffix=""):
     filename = f"{audio_prefix}{ind}{suffix}.wav"
     original_file_path = path.join(raw_d_dir, "speech", filename)
 
+
     if os.path.isfile(original_file_path):
         target_file_path = path.join(processed_d_dir, data_split, "inputs", filename)
         shutil.copy(original_file_path, target_file_path)
@@ -100,18 +101,15 @@ def _files_to_pandas_dataframe(extracted_dir, set_name, idx_range):
 
     files = []
     for idx in idx_range:
-        try:
-            # original files
-            input_file = path.abspath(path.join(extracted_dir, set_name, "inputs", audio_prefix + str(idx) + ".wav"))
-            label_file = path.abspath(path.join(extracted_dir, set_name, "labels", motion_prefix + str(idx) + ".npz"))
-            wav_size = path.getsize(input_file)
-            files.append((input_file, wav_size, label_file))
-        except OSError:
-            continue
+        # original files
+        input_file = path.abspath(path.join(extracted_dir, set_name, "inputs", audio_prefix + str(idx).zfill(2) + ".wav"))
+        label_file = path.abspath(path.join(extracted_dir, set_name, "labels", motion_prefix + str(idx).zfill(2) + ".npz"))
+        if os.path.isfile(input_file):
+            files.append((input_file, label_file))
 
-        print(idx, end=' ')
+            print(idx, end=' ')
 
-    return pandas.DataFrame(data=files, columns=["wav_filename", "wav_filesize", "bvh_filename"])
+    return pandas.DataFrame(data=files, columns=["wav_filename", "bvh_filename"])
 
 
 def check_dataset_directories(raw_data_dir):
