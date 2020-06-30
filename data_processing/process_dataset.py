@@ -215,7 +215,7 @@ def pad_sequence(input_vectors, args):
 
         # Pad sequence not with zeros but with MFCC of the silence
 
-        silence_vectors = tools.calculate_mfcc("data_processing/silence.wav")
+        silence_vectors = tools.calculate_mfcc("silence.wav")
         mfcc_empty_vector = silence_vectors[0]
 
         empty_vectors = np.array([mfcc_empty_vector] * int(args.n_context / 2))
@@ -230,7 +230,7 @@ def pad_sequence(input_vectors, args):
 
     if args.feature_type == "MFCC+Pros":
 
-        silence_vectors = tools.calculate_mfcc("data_processing/silence.wav")
+        silence_vectors = tools.calculate_mfcc("silence.wav")
         mfcc_empty_vector = silence_vectors[0]
 
         prosodic_empty_vector = [0, 0, 0, 0]
@@ -241,14 +241,14 @@ def pad_sequence(input_vectors, args):
 
     if args.feature_type == "Spectro":
 
-        silence_spectro = calculate_spectrogram("data_processing/silence.wav")
+        silence_spectro = calculate_spectrogram("silence.wav")
         spectro_empty_vector = silence_spectro[0]
 
         empty_vectors = np.array([spectro_empty_vector] * int(args.n_context / 2))
 
     if args.feature_type == "Spectro+Pros":
 
-        silence_spectro = calculate_spectrogram("data_processing/silence.wav")
+        silence_spectro = calculate_spectrogram("silence.wav")
         spectro_empty_vector = silence_spectro[0]
 
         prosodic_empty_vector = [0, 0, 0, 0]
@@ -259,10 +259,10 @@ def pad_sequence(input_vectors, args):
 
     if args.feature_type == "MFCC+Spectro":
 
-        silence_spectro = tools.calculate_spectrogram("data_processing/silence.wav")
+        silence_spectro = tools.calculate_spectrogram("silence.wav")
         spectro_empty_vector = silence_spectro[0]
 
-        silence_vectors = tools.calculate_mfcc("data_processing/silence.wav")
+        silence_vectors = tools.calculate_mfcc("silence.wav")
         mfcc_empty_vector = silence_vectors[0]
 
         combined_empty_vector = np.concatenate((mfcc_empty_vector, spectro_empty_vector,))
