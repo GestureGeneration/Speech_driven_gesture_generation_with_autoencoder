@@ -13,7 +13,7 @@ def construct_config_parser():
                             default_config_files = ['./config.yaml'],
                             config_file_parser_class = YAMLConfigFileParser)
 
-    parser.add('--seed', help='Random seed')
+    parser.add('--seed', type=int, help='Random seed')
 
     # ---- The data directories ----
 
@@ -28,9 +28,9 @@ def construct_config_parser():
 
     # ---- Flags ----
 
-    parser.add('-pretrain', '--pretrain_network', action='store_true', 
+    parser.add('-pretrain', '--pretrain_network',           action='store_true', 
                help='If set, pretrain the model in a layerwise manner')
-    parser.add('-load_model', '--load_from_checkpoint', action='store_true',
+    parser.add('-load_model', '--load_model_from_checkpoint',     action='store_true',
                help='If set, load the model from a checkpoint')
     parser.add('-no_early_stopping', '--no_early_stopping', action='store_false',
                help='If set, disable early stopping')
