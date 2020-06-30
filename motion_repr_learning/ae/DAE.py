@@ -14,8 +14,7 @@ import tensorflow as tf
 import numpy as np
 
 from utils.utils import add_noise, loss_reconstruction
-from utils.flags import FLAGS
-
+from config import args
 
 class DAE:
     """ Denoising Autoendoder (DAE)
@@ -26,7 +25,8 @@ class DAE:
     The user specifies the structure of this network
     by specifying number of inputs, the number of hidden
     units for each layer and the number of final outputs.
-    All this information is set in the utils/flags.py file.
+    All this information is set in the config.yaml file at the root of the repository.
+    For details, see config.py.
 
     The number of input neurons is defined as a frame_size*chunk_length,
     since it will take a time-window as an input
@@ -50,8 +50,8 @@ class DAE:
 
         self.num_hidden_layers = np.size(shape) - 2
 
-        self.batch_size = FLAGS.batch_size
-        self.sequence_length = FLAGS.chunk_length
+        self.batch_size = args.batch_size
+        self.sequence_length = args.chunk_length
 
         self.scaling_factor = 1
 
@@ -67,10 +67,10 @@ class DAE:
                                                       shape=data_info.train_shape)
         self._train_data = tf.Variable(self._train_data_initializer,
                                        trainable=False, collections=[], name='Train_data')
-        train_epochs = FLAGS.training_epochs + FLAGS.pretraining_epochs * FLAGS.num_hidden_layers
+        train_epochs = args.training_epochs + args.pretraining_epochs* args.num_hidden_layers
         train_frames = tf.train.slice_input_producer([self._train_data], num_epochs=train_epochs)
         self._train_batch = tf.train.shuffle_batch(train_frames,
-                                                   batch_size=FLAGS.batch_size, capacity=5000,
+                                                   batch_size=args.batch_size, capacity=5000,
                                                    min_after_dequeue=1000, name='Train_batch')
 
         #### 2 - VALIDATE, can be used as TEST ###
@@ -81,12 +81,12 @@ class DAE:
         self._valid_data = tf.Variable(self._valid_data_initializer,
                                        trainable=False, collections=[], name='Valid_data')
         valid_frames = tf.train.slice_input_producer([self._valid_data],
-                                                     num_epochs=FLAGS.training_epochs)
+                                                     num_epochs=args.training_epochs)
         self._valid_batch = tf.train.shuffle_batch(valid_frames,
-                                                   batch_size=FLAGS.batch_size, capacity=5000,
+                                                   batch_size=args.batch_size, capacity=5000,
                                                    min_after_dequeue=1000, name='Valid_batch')
 
-        if FLAGS.weight_decay is not None:
+        if args.weight_decay is not None:
             print('\nWe apply weight decay')
 
         ### Specify tensorflow setup  ###
@@ -99,7 +99,7 @@ class DAE:
                 for i in range(self.num_hidden_layers + 1):  # go over layers
 
                     # create variables for matrices and biases for each layer
-                    self._create_variables(i, FLAGS.weight_decay)
+                    self._create_variables(i, args.weight_decay)
 
                 ##############        DEFINE THE NETWORK     ##################
 
@@ -110,7 +110,7 @@ class DAE:
                 self._target_ = self._train_batch
 
                 # Define output and loss for the training data
-                self._output, _, _ = self.construct_graph(self._input_, FLAGS.dropout)
+                self._output, _, _ = self.construct_graph(self._input_, args.dropout_keep_prob)
                 self._reconstruction_loss = loss_reconstruction(self._output,
                                                                 self._target_, self.max_val)
                 tf.add_to_collection('losses', self._reconstruction_loss)  # add weight decay loses
@@ -179,7 +179,7 @@ class DAE:
         network_input = input_seq_pl
 
         curr_layer = tf.reshape(network_input, [self.batch_size,
-                                                FLAGS.chunk_length * FLAGS.frame_size])
+                                                args.chunk_length * args.frame_size])
 
         numb_layers = self.num_hidden_layers + 1
 
@@ -188,7 +188,7 @@ class DAE:
             # Pass through the network
             for i in range(numb_layers):
 
-                if i == FLAGS.middle_layer:
+                if i == args.middle_layer:
                     # Save middle layer
                     with tf.name_scope('middle_layer'):
                         middle_layer = tf.identity(curr_layer)
@@ -212,7 +212,7 @@ class DAE:
             layer = self._representation = tf.placeholder\
                 (dtype=tf.float32, shape=middle_layer.get_shape().as_list(), name="Respres.")
 
-            for i in range(FLAGS.middle_layer, numb_layers):
+            for i in range(args.middle_layer, numb_layers):
 
                 with tf.name_scope('hidden' + str(i)):
 

@@ -14,8 +14,8 @@ import numpy as np
 
 from DAE import DAE
 import utils.utils as ut
-import utils.flags as fl
 
+from config import args
 class DataInfo(object):
     """Information about the datasets
 
@@ -62,18 +62,18 @@ def learning(data, data_info, just_restore=False):
 
     with tf.Graph().as_default():
 
-        tf.set_random_seed(fl.FLAGS.seed)
+        tf.set_random_seed(args.seed)
 
         start_time = time.time()
 
         # Read the flags
-        variance = fl.FLAGS.variance_of_noise
-        num_hidden = fl.FLAGS.num_hidden_layers
-        dropout = fl.FLAGS.dropout
-        learning_rate = fl.FLAGS.learning_rate
-        batch_size = fl.FLAGS.batch_size
+        variance = args.noise_variance
+        num_hidden = args.num_hidden_layers
+        dropout = args.dropout_keep_prob
+        learning_rate = args.lr
+        batch_size = args.batch_size
 
-        hidden_shapes = [fl.FLAGS.layer1_width
+        hidden_shapes = [args.layer1_width
                          for j in range(num_hidden)]
 
         # Check if the flags makes sence
@@ -93,8 +93,8 @@ def learning(data, data_info, just_restore=False):
             sess = tf_debug.TensorBoardDebugWrapperSession(sess, "taras-All-Series:6064")
 
         # Create a neural network
-        shape = [fl.FLAGS.frame_size * fl.FLAGS.chunk_length] + hidden_shapes + [
-            fl.FLAGS.frame_size * fl.FLAGS.chunk_length]
+        shape = [args.frame_size * args.chunk_length] + hidden_shapes + [
+            args.frame_size * args.chunk_length]
         nn = DAE(shape, sess, variance, data_info)
         print('\nDAE with the following shape was created : ', shape)
 
@@ -123,7 +123,7 @@ def learning(data, data_info, just_restore=False):
             train_summary_op = tf.summary.scalar('Train_error', train_error)
             eval_summary_op = tf.summary.scalar('Validation_error', eval_error)
 
-            summary_dir = fl.FLAGS.summary_dir
+            summary_dir = args.summary_dir
             summary_writer = tf.summary.FileWriter(summary_dir, graph=tf.get_default_graph())
 
             num_batches = int(data.train.num_sequences / batch_size)
@@ -138,7 +138,7 @@ def learning(data, data_info, just_restore=False):
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-            if fl.FLAGS.pretrain:
+            if args.pretrain_network:
                 layers_amount = len(nn.shape) - 2
 
                 # create an optimizers
@@ -162,10 +162,10 @@ def learning(data, data_info, just_restore=False):
 
             # Create a saver
             saver = tf.train.Saver(write_version=tf.train.SaverDef.V2)
-            chkpt_file = fl.FLAGS.chkpt_dir + '/chkpt-final'
+            chkpt_file = args.chkpt_dir + '/chkpt-final'
 
             # restore model, if needed
-            if fl.FLAGS.restore:
+            if args.load_model_from_checkpoint:
                 print("Restoring the model from from the file " + str(chkpt_file) + '.')
                 saver.restore(sess, chkpt_file)
                 print("Model restored.")
@@ -175,20 +175,20 @@ def learning(data, data_info, just_restore=False):
                 return nn
 
             # A few initialization for the early stopping
-            delta = fl.FLAGS.delta_for_early_stopping  # error tolerance for early stopping
+            delta = args.delta_for_early_stopping  # error tolerance for early stopping
             best_error = 10000
             num_valid_batches = int(data.test.num_sequences / batch_size)
 
             try:  # running enqueue threads.
 
                 # Pretrain
-                if fl.FLAGS.pretrain:
+                if args.pretrain_network:
                     layerwise_pretrain(nn, trainers, layers_amount, num_batches)
 
                 # Train the whole network jointly
                 step = 0
                 print('\nFinetune the whole network on ', num_batches, ' batches with ', batch_size,
-                      ' training examples in each for', fl.FLAGS.training_epochs, ' epochs...')
+                      ' training examples in each for', args.training_epochs, ' epochs...')
                 print("")
                 print(" ______________ ______")
                 print("|     Epoch    | RMSE |")
@@ -205,16 +205,16 @@ def learning(data, data_info, just_restore=False):
 
                         # Print results of screen
                         epoch_str = "| {0:3.0f} ".format(epoch)[:5]
-                        perc_str = "({0:3.2f}".format(epoch*100.0 / fl.FLAGS.training_epochs)[:5]
+                        perc_str = "({0:3.2f}".format(epoch*100.0 / args.training_epochs)[:5]
                         error_str = "%) |{0:5.2f}".format(train_error_)[:10] + "|"
                         print(epoch_str, perc_str, error_str)
 
                         if epoch % 5 == 0 and test:
 
-                            rmse = test(nn, fl.FLAGS.data_dir + '/test_1.binary')
+                            rmse = test(nn, args.data_dir + '/test_1.binary')
                             print("\nOur RMSE for the first test sequence is : ", rmse)
 
-                            rmse = test(nn, fl.FLAGS.data_dir + '/test_2.binary')
+                            rmse = test(nn, args.data_dir + '/test_2.binary')
                             print("\nOur RMSE for the second test sequenceis : ", rmse)
 
                         if epoch > 0:
@@ -231,7 +231,7 @@ def learning(data, data_info, just_restore=False):
                             summary_writer.add_summary(eval_sum, step)
 
                             # Early stopping
-                            if fl.FLAGS.early_stopping:
+                            if not args.no_early_stopping:
                                 if (new_error - best_error) / best_error > delta:
                                     print('After ' + str(step) + ' steps started overfitting')
                                     break
@@ -250,10 +250,10 @@ def learning(data, data_info, just_restore=False):
                     step += 1
 
             except tf.errors.OutOfRangeError:
-                if not fl.FLAGS.early_stopping:
+                if args.no_early_stopping:
                     # Save the model
                     save_path = saver.save(sess, chkpt_file)
-                print('Done training for %d epochs, %d steps.' % (fl.FLAGS.training_epochs, step))
+                print('Done training for %d epochs, %d steps.' % (args.training_epochs, step))
                 print("The final model was saved in file: %s" % save_path)
             finally:
                 # When done, ask the threads to stop.
@@ -319,7 +319,7 @@ def encode(nn, input_seq):
         # Split it into chunks
 
         all_chunks = np.reshape([coords_normalized],
-                                (-1, fl.FLAGS.frame_size*fl.FLAGS.chunk_length))
+                                (-1, args.frame_size*args.chunk_length))
 
         if all_chunks.shape[0] < nn.batch_size:
             mupliplication_factor = int(nn.batch_size / all_chunks.shape[0]) + 1
@@ -409,7 +409,7 @@ def decode(nn, represent_vec):
                 if output_batches.size else np.array(output_batch)
 
         # Postprocess...
-        output_vec = np.reshape(output_batches, (-1, fl.FLAGS.chunk_length * fl.FLAGS.frame_size))
+        output_vec = np.reshape(output_batches, (-1, args.chunk_length * args.frame_size))
 
         # Convert back to original values
         reconstructed = ut.convert_back_to_3d_coords(output_vec, max_val, mean_pose)
@@ -441,7 +441,7 @@ def layerwise_pretrain(nn, trainers, layers_amount, num_batches):
 
     for i in range(layers_amount):
         n = i + 1
-        print('Pretraining layer number ', n, ' for ', fl.FLAGS.pretraining_epochs, ' epochs ... ')
+        print('Pretraining layer number ', n, ' for ', args.pretraining_, ' epochs ... ')
 
         with tf.variable_scope("layer_{0}".format(n)):
 
@@ -454,7 +454,7 @@ def layerwise_pretrain(nn, trainers, layers_amount, num_batches):
 
             pretrain_trainer = trainers[i]
 
-            for steps in range(num_batches * fl.FLAGS.pretraining_epochs):
+            for steps in range(num_batches * args.pretraining_):
 
                 loss_summary, loss_value = sess.run([pretrain_trainer, loss])
 

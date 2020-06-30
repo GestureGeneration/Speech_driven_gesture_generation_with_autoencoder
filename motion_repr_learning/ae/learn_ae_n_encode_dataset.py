@@ -8,13 +8,16 @@ Developed by Taras Kucherenko (tarask@kth.se)
 """
 
 import sys
+sys.path.append('.')
 import numpy as np
 import os
 
-import train as tr
-from utils.utils import prepare_motion_data, DataSet, DataSets, fl
+import train as autoencoder_training
+from utils.utils import prepare_motion_data, DataSet, DataSets
 
-def create_nn(train_data, dev_data, max_val, mean_pose, restoring):
+from config import args
+
+def create_nn(train_data, dev_data, max_val, mean_pose):
     """
     Train or restore a neural network
     Args:
@@ -22,7 +25,6 @@ def create_nn(train_data, dev_data, max_val, mean_pose, restoring):
      dev_data:           dev dataset normalized to the values [-1,1]
      max_val:            maximal values in the dataset
      mean_pose:          mean pose of the dataset
-     restoring:          weather  we are going to just restore already trained model
     Returns:
      nn: neural network, which is ready to use
     """
@@ -31,66 +33,60 @@ def create_nn(train_data, dev_data, max_val, mean_pose, restoring):
 
     data = DataSets()
 
-    data.train = DataSet(train_data, fl.FLAGS.batch_size)
-    data.test = DataSet(dev_data, fl.FLAGS.batch_size)
+    data.train = DataSet(train_data, args.batch_size)
+    data.test = DataSet(dev_data, args.batch_size)
 
     # Assign variance
     data.train.sigma = np.std(train_data, axis=(0, 1))
 
     # Create information about the dataset
-    data_info = tr.DataInfo(data.train.sigma, data.train._sequences.shape,
+    data_info = autoencoder_training.DataInfo(data.train.sigma, data.train._sequences.shape,
                             data.test._sequences.shape, max_val, mean_pose)
 
-    # Set "restore" flag
-    fl.FLAGS.restore = restoring
-
     # Train the network
-    nn = tr.learning(data, data_info, just_restore=restoring)
+    nn = autoencoder_training.learning(data, data_info, just_restore=args.load_model_from_checkpoint)
 
     return nn
 
 def check_params():
-
-    # Check if script get enough parameters
-    if len(sys.argv)<2:
-        raise ValueError('Not enough paramters! \nUsage : python '+sys.argv[0].split("/")[-1]+' DATA_DIR')
-
     # Check if the dataset exists
-    if not os.path.exists(sys.argv[1]):
-        raise ValueError('Path to the dataset ({}) does not exist!\nPlease, provide correct DATA_DIR as a script parameter'
-                         ''.format(sys.argv[1]))
+    if not os.path.isdir(os.path.abspath(args.data_dir)):
+        raise ValueError(f'Path to the dataset ({os.path.abspath(args.data_dir)}) does not exist!\n' + \
+                          'Please provide the correct path.')
 
     # Check if the flags were set properly
-
-    if not os.path.exists(fl.FLAGS.chkpt_dir):
-        raise ValueError('Path to the checkpoints ({}) does not exit!\nChange the "chkpt_dir" flag in utils/flags.py'
-                         ''.format(fl.FLAGS.chkpt_dir))
+    if not os.path.isdir(os.path.abspath(args.chkpt_dir)):
+         raise ValueError(f'Path to the checkpoints ({args.chkpt_dir}) does not exist!\n' + \
+                           'Please provide the correct path.')
 
 if __name__ == '__main__':
-
     # Check parameters
     check_params()
 
-    # Get the data
-    DATA_DIR = sys.argv[1]
     train_normalized_data, train_data, dev_normalized_data, \
-    max_val, mean_pose = prepare_motion_data(DATA_DIR)
+    max_val, mean_pose = prepare_motion_data(args.data_dir)
 
-    # Train an AE network
-    nn = create_nn(train_normalized_data, dev_normalized_data, max_val, mean_pose, restoring=False)
+    # Train or load the AE network
+    nn = create_nn(train_normalized_data, dev_normalized_data, max_val, mean_pose)
 
-    """                  Encode the train data                 """
+    """       Create save directory for the encoded data         """
+    
+    save_dir = os.path.join(args.data_dir, str(args.layer1_width))
+    
+    if not os.path.isdir(save_dir):
+        print(f"Created directory {os.path.abspath(save_dir)} for saving the encoded data.")
+        os.makedirs(save_dir)
 
+
+    """                  Encode the train data                   """
     # Encode it
-    encoded_train_data = tr.encode(nn, train_normalized_data)
-
+    encoded_train_data = autoencoder_training.encode(nn, train_normalized_data)
     # And save into file
-    np.save(DATA_DIR+"/"+str(fl.FLAGS.layer1_width)+"/Y_train_encoded.npy", encoded_train_data)
+    np.save(os.path.join(save_dir, "Y_train_encoded.npy"), encoded_train_data)
 
     """                  Encode the dev data                     """
 
     # Encode it
-    encoded_dev_data = tr.encode(nn, dev_normalized_data)
-
+    encoded_dev_data = autoencoder_training.encode(nn, dev_normalized_data)
     # And save into files
-    np.save(DATA_DIR+"/"+str(fl.FLAGS.layer1_width)+"/Y_dev_encoded.npy", encoded_dev_data)
+    np.save(os.path.join(save_dir, "Y_dev_encoded.npy"), encoded_dev_data)
