@@ -166,8 +166,9 @@ def learning(data, data_info, just_restore=False):
 
             # restore model, if needed
             if fl.FLAGS.restore:
+                print("Restoring the model from from the file " + str(chkpt_file) + '.')
                 saver.restore(sess, chkpt_file)
-                print("Model restored from the file " + str(chkpt_file) + '.')
+                print("Model restored.")
 
             if just_restore:
                 coord.request_stop()

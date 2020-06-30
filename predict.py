@@ -7,6 +7,16 @@ The gestures will be written in the text file:
 import sys
 from keras.models import load_model
 import numpy as np
+from scipy.signal import savgol_filter
+
+
+def smoothing(motion):
+
+    smoothed = [savgol_filter(motion[:,i], 9, 3) for i in range(motion.shape[1])]
+
+    new_motion = np.array(smoothed).transpose()
+
+    return new_motion
 
 
 def predict(model_name, input_file, output_file):
@@ -21,11 +31,14 @@ def predict(model_name, input_file, output_file):
 
     """
     model = load_model(model_name)
-    X = np.load(input_file)
+    audio = np.load(input_file)
 
-    predicted = np.array(model.predict(X))
-    print(predicted.shape)
-    np.savetxt(output_file, predicted)
+    predicted = np.array(model.predict(audio))
+
+    smoothed = smoothing(predicted)
+
+    print("Encoding shape is: ", predicted.shape)
+    np.savetxt(output_file, smoothed)
 
 
 if __name__ == "__main__":
@@ -36,3 +49,4 @@ if __name__ == "__main__":
                          ' MODEL_NAME INPUT_FILE OUTPUT_FILE')
 
     predict(sys.argv[1], sys.argv[2], sys.argv[3])
+    print("Done")

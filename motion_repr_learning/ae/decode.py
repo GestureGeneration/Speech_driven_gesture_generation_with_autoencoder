@@ -6,7 +6,7 @@ Developed by Taras Kucherenko (tarask@kth.se)
 import train as tr
 import utils.data as dt
 import utils.flags as fl
-from learn_dataset_encoding import create_nn, prepare_motion_data
+from learn_ae_n_encode_dataset import create_nn, prepare_motion_data
 
 import numpy as np
 
