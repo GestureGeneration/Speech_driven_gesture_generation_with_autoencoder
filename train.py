@@ -5,6 +5,8 @@ This script should be used to train the model, as described in READ.me
 """
 
 import sys
+from os.path import join
+
 import numpy as np
 from sklearn.model_selection import train_test_split
 
@@ -57,12 +59,12 @@ def train(model_file):
     """
 
     # Get the data
-    X = np.load(DATA_DIR + '/X_train.npy')
+    X = np.load(join(DATA_DIR, 'X_train.npy'))
 
     if ENCODED:
 
         # If we learn speech-representation mapping we use encoded motion as output
-        Y = np.load(DATA_DIR + '/' + str(N_OUTPUT)+ '/Y_train_encoded.npy')
+        Y = np.load(join(DATA_DIR, str(N_OUTPUT), 'Y_train_encoded.npy'))
 
         # Correct the sizes
         train_size = min(X.shape[0], Y.shape[0])
@@ -70,7 +72,7 @@ def train(model_file):
         Y = Y[:train_size]
 
     else:
-        Y = np.load(DATA_DIR + '/Y_train.npy')
+        Y = np.load(join(DATA_DIR, 'Y_train.npy'))
 
     N_train = int(len(X)*0.9)
     N_validation = len(X) - N_train
@@ -124,5 +126,4 @@ def train(model_file):
 
 
 if __name__ == "__main__":
-
     train(sys.argv[1]+".hdf5")

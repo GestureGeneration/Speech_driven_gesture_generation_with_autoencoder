@@ -8,6 +8,7 @@ Developed by Taras Kucherenko (tarask@kth.se)
 """
 
 import time
+from os.path import join, abspath
 import tensorflow as tf
 from tensorflow.python import debug as tf_debug
 import numpy as np
@@ -162,7 +163,7 @@ def learning(data, data_info, just_restore=False):
 
             # Create a saver
             saver = tf.train.Saver(write_version=tf.train.SaverDef.V2)
-            chkpt_file = args.chkpt_dir + '/chkpt-final'
+            chkpt_file = abspath(join(args.chkpt_dir, 'chkpt-final'))
 
             # restore model, if needed
             if args.load_model_from_checkpoint:
