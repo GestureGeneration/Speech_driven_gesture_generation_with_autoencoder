@@ -10,6 +10,10 @@ import train as tr
 from learn_ae_n_encode_dataset import create_nn, prepare_motion_data
 from config import args
 
+import numpy as np
+
+import sys
+
 if __name__ == '__main__':
     # Make sure that the two mandatory arguments are provided
     if args.input_file is None or args.output_file is None:

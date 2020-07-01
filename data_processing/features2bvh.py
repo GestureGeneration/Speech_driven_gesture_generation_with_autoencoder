@@ -15,12 +15,12 @@ from pymo.preprocessing import *
 from pymo.viz_tools import *
 from pymo.writers import *
 
+from argparse import ArgumentParser
+
 import joblib as jl
 
-# load data pipeline
-pipeline = jl.load('processed/data_pipe.sav')
-
 def feat2bvh(feat_file, bvh_file):
+
     features = np.load(feat_file)['clips']
     print(features.shape)
 
@@ -34,4 +34,22 @@ def feat2bvh(feat_file, bvh_file):
     with open(bvh_file,'w') as f:
         writer.write(bvh_data[0], f)
 
-feat2bvh("processed/NaturalTalking_002.npz", 'processed/converted2.bvh')
+if __name__ == '__main__':
+
+    # Setup parameter parser
+    parser = ArgumentParser(add_help=False)
+    parser.add_argument('--feat_dir', '-feat', required=True,
+                                   help="Path where motion features are stored")
+    parser.add_argument('--bvh_dir', '-bvh', required=True,
+                                   help="Path where produced motion files (in BVH format) will be stored")
+    parser.add_argument('--pipeline_dir', '-pipe', default="./utils/",
+                        help="Path where the motion data processing pipeline is be stored")
+
+    params = parser.parse_args()
+
+
+    # load data pipeline
+    pipeline = jl.load('processed/data_pipe.sav')
+    
+    # convert a file
+    feat2bvh(params.feat_dir, params.bvh_dir)

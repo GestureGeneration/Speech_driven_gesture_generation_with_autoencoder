@@ -3,6 +3,9 @@ This file contains helping function for the training and testing of the AE
 """
 
 from os.path import join
+import sys
+
+sys.path.append('.')
 
 import numpy as np
 import tensorflow as tf
