@@ -30,25 +30,36 @@ ________________________________________________________________________________
 
 # How to use this repository?
 
-# 0. Notation
-
-We write all the parameters which needs to be specified by a user in the capslock.
-
 ## 1. Obtain raw data
 
 - Clone this repository
+```
+git clone git@github.com:GestureGeneration/Speech_driven_gesture_generation_with_autoencoder.git
+```
+- Switch branch to 'GENEA_2020'
+```
+git checkout GENEA_2020
+```
 - Download a dataset from KTH Box using the link you obtained after singing the license agreement
 
 
 ## 2. Pre-process the data
 ```
 cd data_processing
+
+# encode motion from BVH files into exponensial map representation
+python bvh2features.py -orig <path/to/motion/folder/ -dest <path/to/motion/folder/
+
+# Split the dataset into training and validation
 python split_dataset.py
+
+# Encode all the features
 python process_dataset.py
+
 cd ..
 ```
 
-By default, the model expects the dataset in the `<repository>/dataset/raw` folder, and the processed dataset will be available in the `<repository>/dataset/processed folder`. If your dataset is elsewhere, please provide the correct paths with the `--raw_data_dir` and `--proc_data_dir` command line arguments. You can also use '--help' argument to see more details about the scripts.
+By default, the model expects the dataset in the `<repository>/dataset/raw` folder, and the processed dataset will be available in the `<repository>/dataset/processed folder`. If your dataset is elsewhere, please provide the correct paths with the `--raw_data_dir` and `--proc_data_dir` command line arguments for the 'split_dataset.py' and `process_dataset.py`. You can also use '--help' argument to see more details about the scripts.
 
 As a result of running this script
 - numpy binary files `X_train.npy`, `Y_train.npy` (training dataset files) are created under `--proc_data_dir`
@@ -60,30 +71,28 @@ As a result of running this script
 Create a directory to save training checkpoints such as `chkpt/` and use it as CHKPT_DIR parameter.
 #### Learn dataset encoding and encode the training and validation datasets
 ```sh
-python motion_repr_learning/ae/learn_ae_n_encode_dataset.py DATA_DIR -chkpt_dir=CHKPT_DIR -layer1_width=DIM
+python motion_repr_learning/ae/learn_ae_n_encode_dataset.py --data_dir <path/to/your/dataset> --layer1_width 40
 ```
 
 The optimal dimensionality (DIM) in our experiment was 40
-
-More information can be found in the folder `motion_repr_learning` 
 
 
 ## 4. Learn speech-driven gesture generation model
 
 ```sh
 python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE DIM
-# MODEL_NAME = hdf5 file name such as 'model_500ep_posvel_60.hdf5'
+# MODEL_NAME = file name for the model
 # EPOCHS = how many epochs do we want to train the model (recommended - 100)
-# DATA_DIR = directory with the data (should be same as above)
+# DATA_DIR = directory with the data (should be same as before)
 # N_INPUT = how many dimension does speech data have (default - 26)
-# ENCODE = weather we train on the encoded gestures (using proposed model) or on just on the gestures as their are (using baseline model)
-# DIM = how many dimension does encoding have (ignored if you don't encode)
+# ENCODE = True (because we use AutoEncoder)
+# DIM = how many dimension does encoding have (should be the same as above, recommended - 40)
 ```
 
 ## 5. Predict gesture
 
 ```sh
-python predict.py MODEL_NAME INPUT_SPEECH_FILE OUTPUT_GESTURE_FILE
+python predict.py MODEL_NAME.hdf5 INPUT_SPEECH_FILE OUTPUT_GESTURE_FILE
 ```
 
 ```sh
