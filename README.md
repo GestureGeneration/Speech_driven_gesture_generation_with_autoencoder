@@ -107,10 +107,14 @@ The predicted gestures have to be decoded with `decode.py`, which reuses the con
 python motion_repr_learning/ae/decode.py python decode.py -input_file INPUT_FILE -output_file OUTPUT_FILE --layer1_width DIM --batch_size=8 
 ```
 
-## 6. Quantitative evaluation
-Use scripts in the `evaluation` folder of this directory.
+Convert the motion from exponential maps to euler angles and write into BVH file
+```sh
+cd data_processind
+python features2bvh.py
+```
 
-## 7. Qualitative evaluation
+
+## 6. Qualitative evaluation
 Use animation server which is provided at the GENEA Challenge Github page to visualize your gestures from BVH format.
 
 &nbsp;
