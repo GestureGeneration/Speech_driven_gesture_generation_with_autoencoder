@@ -1,0 +1,46 @@
+# See config.py for details about these parameters.
+
+# NOTE: The defaults checkpoint, result and dataset directories are set in the code.
+
+seed: 123456
+
+#-------------------------------------------------------
+# These boolean flags can be enabled by supplying them |
+# through the command-line or uncommenting them below  |
+#-------------------------------------------------------
+
+#pretrain_network
+#load_model
+#no_early_stopping
+
+delta_for_early_stopping: 0.5
+
+# ---- Network architecture ----
+frame_size: 45
+num_hidden_layers: 1
+middle_layer: 1
+
+layer1_width: 312
+layer2_width: 48
+layer3_width: 36
+
+# ---- Training parameters ----
+chunk_length: 1
+dropout_keep_prob: 0.9
+noise_variance: 0.05
+training_epochs: 20
+pretraining_epochs: 5
+batch_size: 128
+lr: 0.0001
+pretraining_lr: 0.001
+
+
+
+
+
+#-----------------------------------------------------
+# Weight decay is disabled by default.               |
+# You can enable it by setting its multiplier below: |
+#-----------------------------------------------------
+
+# weight_decay: <some value>

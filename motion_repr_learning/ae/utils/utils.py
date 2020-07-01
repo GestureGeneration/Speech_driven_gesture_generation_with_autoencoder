@@ -2,13 +2,11 @@
 This file contains helping function for the training and testing of the AE
 """
 
+from os.path import join
 
 import numpy as np
 import tensorflow as tf
-
-
-import utils.flags as fl
-
+from config import args
 """ Dataset class"""
 
 class DataSet(object):
@@ -51,14 +49,14 @@ def read_test_seq_from_binary(binary_file_name):
     # Read the sequence
     read_seq = np.fromfile(binary_file_name)
     # Reshape
-    read_seq = read_seq.reshape(-1, fl.FLAGS.frame_size)
-    amount_of_frames = int(read_seq.shape[0] / (fl.FLAGS.chunk_length))
+    read_seq = read_seq.reshape(-1, args.frame_size)
+    amount_of_frames = int(read_seq.shape[0] / (args.chunk_length))
     if amount_of_frames > 0:
         # Clip array so that it divides exactly into the inputs we want (frame_size * chunk_length)
-        read_seq = read_seq[0:amount_of_frames * fl.FLAGS.chunk_length]
+        read_seq = read_seq[0:amount_of_frames * args.chunk_length]
 
     # Reshape
-    read_seq = read_seq.reshape(-1, fl.FLAGS.frame_size * fl.FLAGS.chunk_length) #?
+    read_seq = read_seq.reshape(-1, args.frame_size * args.chunk_length) #?
 
     return read_seq
 
@@ -140,13 +138,13 @@ def reshape_dataset(dataset):
         dataset_final: array of the dataset in a proper shape
     """
 
-    amount_of_train_chunks = int(dataset.shape[0] / fl.FLAGS.chunk_length)
-    dataset_shorten = dataset[:amount_of_train_chunks * fl.FLAGS.chunk_length, :fl.FLAGS.frame_size]
-    dataset_chunks = np.reshape(dataset_shorten, (-1, fl.FLAGS.chunk_length * fl.FLAGS.frame_size))
+    amount_of_train_chunks = int(dataset.shape[0] / args.chunk_length)
+    dataset_shorten = dataset[:amount_of_train_chunks * args.chunk_length, :args.frame_size]
+    dataset_chunks = np.reshape(dataset_shorten, (-1, args.chunk_length * args.frame_size))
 
     # Merge all the time-frames together
     dataset_final = np.reshape(dataset_chunks, [amount_of_train_chunks,
-                                                fl.FLAGS.chunk_length * fl.FLAGS.frame_size])
+                                                args.chunk_length * args.frame_size])
 
     return dataset_final
 
@@ -156,6 +154,7 @@ def prepare_motion_data(data_dir):
 
     Args:
         data_dir:           a directory with the dataset
+        args:               config parameters, see 'config.py' for details
     Return:
         Y_train:            an array of the training dataset
         Y_train_normalized: training dataset normalized to the values [-1,1]
@@ -168,8 +167,8 @@ def prepare_motion_data(data_dir):
 
     # Get the data
 
-    Y_train = np.load(data_dir + '/Y_train.npy')
-    Y_dev = np.load(data_dir + '/Y_dev.npy')
+    Y_train = np.load(join(data_dir, 'Y_train.npy'))
+    Y_dev = np.load(join(data_dir, 'Y_dev.npy'))
 
     # Normalize dataset
     max_val = np.amax(np.absolute(Y_train), axis=(0))
@@ -185,23 +184,23 @@ def prepare_motion_data(data_dir):
 
     # Reshape to accomodate multiple frames at each input
 
-    if fl.FLAGS.chunk_length > 1:
+    if args.chunk_length > 1:
         Y_train_normalized = reshape_dataset(Y_train_normalized)
         Y_dev_normalized = reshape_dataset(Y_dev_normalized)
 
     # Pad max values and the mean pose, if neeeded
-    if fl.FLAGS.chunk_length > 1:
-        max_val = np.tile(max_val, fl.FLAGS.chunk_length)
-        mean_pose = np.tile(mean_pose, fl.FLAGS.chunk_length)
+    if args.chunk_length > 1:
+        max_val = np.tile(max_val, args.chunk_length)
+        mean_pose = np.tile(mean_pose, args.chunk_length)
 
 
     # Some tests for flags
-    if fl.FLAGS.restore and fl.FLAGS.pretrain:
+    if args.load_model_from_checkpoint and args.pretrain_network:
         print('ERROR! You cannot restore and pretrain at the same time!'
               ' Please, chose one of these options')
         exit(1)
 
-    if fl.FLAGS.middle_layer > fl.FLAGS.num_hidden_layers:
+    if args.middle_layer > args.num_hidden_layers:
         print('ERROR! Middle layer cannot be more than number of hidden layers!'
               ' Please, update flags')
         exit(1)

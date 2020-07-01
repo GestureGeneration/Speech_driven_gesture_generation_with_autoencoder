@@ -12,9 +12,9 @@ parser = argparse.ArgumentParser(
                    A framework for semantically-aware speech-driven gesture generation""")
 
 # Folders params
-parser.add_argument('--raw_data_dir', '-data_raw', default="../../dataset/raw/",
+parser.add_argument('--raw_data_dir', '-data_raw', default="../dataset/raw/",
                     help='Path to the folder with the raw dataset')
-parser.add_argument('--proc_data_dir', '-data_proc', default="../../dataset/processed/",
+parser.add_argument('--proc_data_dir', '-data_proc', default="../dataset/processed/",
                     help='Path to the folder with the processed dataset')
 
 # Sequence processing
