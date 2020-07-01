@@ -3,11 +3,6 @@ import os
 
 # NOTE: the global variable 'args' for accessing the config parameters from other modules
 #       is defined at the very bottom of this file
-
-# Modify this function to set the default home directory for this repo
-def home_out(path):
-    return os.path.join(os.environ['HOME'], 'tmp', 'MoCap', path)
-
 def construct_config_parser():
     parser = ArgumentParser(args_for_setting_config_path = ['-config'],
                             default_config_files = ['./config.yaml'],
@@ -15,24 +10,27 @@ def construct_config_parser():
 
     parser.add('--seed', type=int, help='Random seed')
 
-    # ---- The data directories ----
+    # ---- Data directories ----
+    
+    parser.add('--data_dir',     help='The directory with the preprocessed dataset')
+    parser.add('--summary_dir',  help='Directory for saving the summary data')
+    parser.add('--chkpt_dir',    help='Directory for saving the model checkpoints')
+    parser.add('--results_file', help='File for saving the results of the experiments')
 
-    parser.add('-data_dir', '--data_dir', required=True,
-               help='The directory with the preprocessed dataset')
-    parser.add('--summary_dir', default=home_out('summaries_exp'),
-               help='Directory for saving the summary data')
-    parser.add('--chkpt_dir', default=home_out('chkpts_exp'),
-               help='Directory for saving the model checkpoints')
-    parser.add('--results_file', default=home_out('results.txt'),
-               help='File for saving the results of the experiments')
+    # ---- Input/output files for 'decode.py' only ----
+
+    parser.add('-input_file',  default=None, 
+               help="The encoded prediction file that will be decoded (only used in 'decode.py')")
+    parser.add('-output_file', default=None,
+               help="The output file where the decoded gesture will be stored (only used in 'decode.py')")
 
     # ---- Flags ----
 
-    parser.add('-pretrain', '--pretrain_network',           action='store_true', 
+    parser.add('-pretrain', '--pretrain_network',               action='store_true', 
                help='If set, pretrain the model in a layerwise manner')
-    parser.add('-load_model', '--load_model_from_checkpoint',     action='store_true',
+    parser.add('-load_model', '--load_model_from_checkpoint',   action='store_true',
                help='If set, load the model from a checkpoint')
-    parser.add('-no_early_stopping', '--no_early_stopping', action='store_false',
+    parser.add('-no_early_stopping', '--no_early_stopping',     action='store_false',
                help='If set, disable early stopping')
 
     # ---- Network architecture --- 

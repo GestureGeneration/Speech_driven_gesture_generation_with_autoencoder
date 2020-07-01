@@ -1,13 +1,11 @@
 # See config.py for details about these parameters.
 
-# NOTE: The defaults checkpoint, result and dataset directories are set in the code.
+data_dir:     "./dataset/processed/"
+summary_dir:    "./results/summaries/"
+chkpt_dir:  "./results/checkpoints/"
+results_file: "./results/results.txt"
 
 seed: 123456
-
-#-------------------------------------------------------
-# These boolean flags can be enabled by supplying them |
-# through the command-line or uncommenting them below  |
-#-------------------------------------------------------
 
 delta_for_early_stopping: 0.5
 
@@ -31,9 +29,8 @@ lr: 0.0001
 pretraining_lr: 0.001
 
 
-#-----------------------------------------------------
-# Weight decay is disabled by default.               |
-# You can enable it by setting its multiplier below: |
-#-----------------------------------------------------
+
+# Weight decay is disabled by default.               
+# You can enable it by setting its multiplier below: 
 
 # weight_decay: <some value>

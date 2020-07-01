@@ -48,5 +48,9 @@ if __name__ == "__main__":
         raise ValueError('Not enough paramters! \nUsage : python ' + sys.argv[0].split("/")[-1] +
                          ' MODEL_NAME INPUT_FILE OUTPUT_FILE')
 
-    predict(sys.argv[1], sys.argv[2], sys.argv[3])
+    model_file = sys.argv[1] 
+    if not model_file.endswith(".hdf5"):
+        model_file += ".hdf5"
+    
+    predict(model_file, sys.argv[2], sys.argv[3])
     print("Done")
