@@ -15,9 +15,9 @@ def construct_config_parser():
 
     parser.add('--seed', type=int, help='Random seed')
 
-    # ---- The data directories ----
-
-    parser.add('-data_dir', '--data_dir', required=True,
+    # ---- Data directories ----
+    
+    parser.add('-data_dir', '--data_dir', default="./dataset/processed/",
                help='The directory with the preprocessed dataset')
     parser.add('--summary_dir', default=home_out('summaries_exp'),
                help='Directory for saving the summary data')
@@ -25,6 +25,13 @@ def construct_config_parser():
                help='Directory for saving the model checkpoints')
     parser.add('--results_file', default=home_out('results.txt'),
                help='File for saving the results of the experiments')
+
+    # ---- Input/output files for 'decode.py' only ----
+
+    parser.add('-input_file', default=None, 
+               help="The encoded prediction file that will be decoded (only used in 'decode.py')")
+    parser.add('-output_file', default=None,
+               help="The output file where the decoded gesture will be stored (only used in 'decode.py')")
 
     # ---- Flags ----
 

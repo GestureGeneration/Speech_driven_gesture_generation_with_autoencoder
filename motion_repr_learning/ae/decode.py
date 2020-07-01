@@ -2,30 +2,33 @@
 This file contains a usage script, intended to test using interface.
 Developed by Taras Kucherenko (tarask@kth.se)
 """
-
-import train as tr
-import utils.data as dt
-import utils.flags as fl
-from learn_ae_n_encode_dataset import create_nn, prepare_motion_data
-
+import sys
+sys.path.append('.')
 import numpy as np
 
-import sys
-
-DATA_DIR = sys.argv[1]
-TEST_FILE = sys.argv[2]
-OUTPUT_FILE = sys.argv[3]
+import train as tr
+from learn_ae_n_encode_dataset import create_nn, prepare_motion_data
+from config import args
 
 if __name__ == '__main__':
+    # Make sure that the two mandatory arguments are provided
+    if args.encoded_prediction_file is None or args.decoded_gesture_file is None:
+        print("Usage: python decode.py -input_file IN -output_file OUT \n" + \
+              "Where IN is the encoded prediction file and OUT is the file in which the decoded gestures will be saved.")
+        exit(-1)
+    
+    # For decoding these arguments are always False and True
+    args.pretrain_network = False
+    args.load_model_from_checkpoint = True
 
     # Get the data
-    Y_train_normalized, Y_train, Y_dev_normalized, max_val, mean_pose  = prepare_motion_data(DATA_DIR)
+    Y_train_normalized, Y_train, Y_dev_normalized, max_val, mean_pose  = prepare_motion_data(args.data_dir)
 
     # Train the network
-    nn = create_nn(Y_train_normalized, Y_dev_normalized, max_val, mean_pose, restoring=True)
+    nn = create_nn(Y_train_normalized, Y_dev_normalized, max_val, mean_pose)
 
     # Read the encoding
-    encoding = np.loadtxt(TEST_FILE)
+    encoding = np.loadtxt(args.encoded_prediction_file)
 
     print(encoding.shape)
 
@@ -34,7 +37,7 @@ if __name__ == '__main__':
 
     print(decoding.shape)
 
-    np.save(OUTPUT_FILE, decoding)
+    np.save(args.decoded_gesture_file, decoding)
 
     # Close Tf session
     nn.session.close()
