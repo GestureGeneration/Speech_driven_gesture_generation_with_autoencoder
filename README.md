@@ -32,15 +32,16 @@ ________________________________________________________________________________
 
 # 0. Notation
 
-We write all the parameters which needs to be specified by a user in the capslock.
+Whenever a parameter is written in caps (such as DATA_DIR), it has to be specified by the user on the command line as a positional argument.
 
 ## 1. Obtain raw data
 
 - Clone this repository
 - Download a dataset from KTH Box using the link you obtained after singing the license agreement
 
-
 ## 2. Pre-process the data
+By default, the model expects the dataset in the `<repository>/dataset/raw` folder, and the processed dataset will be available in the `<repository>/dataset/processed folder`. If your dataset is elsewhere, please provide the correct paths with the `--raw_data_dir` and `--proc_data_dir` command line arguments. You can also use '--help' argument to see more details about the scripts.
+
 ```
 cd data_processing
 python split_dataset.py
@@ -48,25 +49,20 @@ python process_dataset.py
 cd ..
 ```
 
-By default, the model expects the dataset in the `<repository>/dataset/raw` folder, and the processed dataset will be available in the `<repository>/dataset/processed folder`. If your dataset is elsewhere, please provide the correct paths with the `--raw_data_dir` and `--proc_data_dir` command line arguments. You can also use '--help' argument to see more details about the scripts.
+As a result of running this script, the dataset is created in `--proc_data_dir`:
+- the training dataset files `X_train.npy`, `Y_train.npy` and the validation dataset files `X_dev.npy`, `Y_dev.npy`are binary numpy files
+- the audio inputs for testing (such as `X_test_NaturalTalking_04.npy`) are under the `/test_inputs/` subfolder
 
-As a result of running this script
-- numpy binary files `X_train.npy`, `Y_train.npy` (training dataset files) are created under `--proc_data_dir`
-- under `/test_inputs/` subfolder of the processed dataset folder test audios, such as `X_test_audio1168.npy` , are created
+There rest of the folders in --proc_data_dir (e.g. `/dev_inputs/` or `/train/`) can be ignored (they are a side effect of the preprocessing script).
 
-
-## 3. Learn motion representation by AutoEncoder and Encode the datset
-
-Create a directory to save training checkpoints such as `chkpt/` and use it as CHKPT_DIR parameter.
-#### Learn dataset encoding and encode the training and validation datasets
-```sh
-python motion_repr_learning/ae/learn_ae_n_encode_dataset.py DATA_DIR -chkpt_dir=CHKPT_DIR -layer1_width=DIM
+## 3. Learn motion representation by AutoEncoder and encode the training and validation datasets
+```python
+python motion_repr_learning/ae/learn_ae_n_encode_dataset.py --layer1_width DIM
 ```
-
-The optimal dimensionality (DIM) in our experiment was 40
+There are several parameters that can be modified in the `config.yaml` file or through the command line, see `config.py` for details.
+The optimal dimensionality (DIM) in our experiment was 40. 
 
 More information can be found in the folder `motion_repr_learning` 
-
 
 ## 4. Learn speech-driven gesture generation model
 
@@ -88,14 +84,13 @@ python predict.py MODEL_NAME INPUT_SPEECH_FILE OUTPUT_GESTURE_FILE
 
 ```sh
 # Usage example
-python predict.py model.hdf5 data/test_inputs/X_test_audio1168.npy data/test_inputs/predict_1168_20fps.txt
+python predict.py model.hdf5 data/test_inputs/X_test_NaturalTalking_04.npy data/test_inputs/predict_04_20fps.txt
 ```
 
+The predicted gestures have to be decoded with `decode.py`, which reuses the config from step 3.
 ```sh
-# You need to decode the gestures
-python motion_repr_learning/ae/decode.py DATA_DIR ENCODED_PREDICTION_FILE DECODED_GESTURE_FILE -restore=True -pretrain=False -layer1_width=DIM -chkpt_dir=CHKPT_DIR -batch_size=8 
+python motion_repr_learning/ae/decode.py python decode.py -input_file INPUT_FILE -output_file OUTPUT_FILE --layer1_width DIM --batch_size=8 
 ```
-
 
 ## 6. Quantitative evaluation
 Use scripts in the `evaluation` folder of this directory.
