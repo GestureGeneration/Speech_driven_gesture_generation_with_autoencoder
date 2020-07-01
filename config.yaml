@@ -9,10 +9,6 @@ seed: 123456
 # through the command-line or uncommenting them below  |
 #-------------------------------------------------------
 
-#pretrain_network
-#load_model
-#no_early_stopping
-
 delta_for_early_stopping: 0.5
 
 # ---- Network architecture ----
@@ -27,15 +23,12 @@ layer3_width: 36
 # ---- Training parameters ----
 chunk_length: 1
 dropout_keep_prob: 0.9
-noise_variance: 0.05
+noise_variance: 0.01
 training_epochs: 20
 pretraining_epochs: 5
 batch_size: 128
 lr: 0.0001
 pretraining_lr: 0.001
-
-
-
 
 
 #-----------------------------------------------------

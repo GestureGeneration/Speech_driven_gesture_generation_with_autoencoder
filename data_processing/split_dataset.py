@@ -25,7 +25,7 @@ motion_prefix = "NaturalTalking_0"
 def copy_files(ind, raw_d_dir, processed_d_dir, data_split, suffix=""):
     # Copy audio
     filename = f"{audio_prefix}{ind}{suffix}.wav"
-    original_file_path = path.join(raw_d_dir, "speech", filename)
+    original_file_path = path.join(raw_d_dir, "Audio", filename)
 
 
     if os.path.isfile(original_file_path):
@@ -34,7 +34,7 @@ def copy_files(ind, raw_d_dir, processed_d_dir, data_split, suffix=""):
 
     # Copy gestures
     filename = f"{motion_prefix}{ind}{suffix}.npz"
-    original_file_path = path.join(raw_d_dir, "motion", filename)
+    original_file_path = path.join(raw_d_dir, "Motion", filename)
     
     if os.path.isfile(original_file_path):
         target_file_path = path.join(processed_d_dir, data_split, "labels", filename)
@@ -46,16 +46,16 @@ def create_dataset_splits(raw_d_dir, processed_d_dir):
 
     # prepare dev data
     for i in range(1, DEV_LAST_ID):
-        copy_files(i, raw_d_dir, processed_d_dir, "dev")
+        copy_files(str(i).zfill(2), raw_d_dir, processed_d_dir, "dev")
 
     # prepare test data
     for i in range(DEV_LAST_ID, TEST_LAST_ID):
-        copy_files(i, raw_d_dir, processed_d_dir, "test")
+        copy_files(str(i).zfill(2), raw_d_dir, processed_d_dir, "test")
 
     # prepare training data
     for i in range(TEST_LAST_ID, TRAIN_LAST_ID):
-        copy_files(i, raw_d_dir, processed_d_dir, "train")
-        copy_files(i, raw_d_dir, processed_d_dir, "train", "_2")
+        copy_files(str(i).zfill(2), raw_d_dir, processed_d_dir, "train")
+        copy_files(str(i).zfill(2), raw_d_dir, processed_d_dir, "train", "_2")
 
     extracted_dir = path.join(processed_d_dir)
 
@@ -124,8 +124,8 @@ def check_dataset_directories(raw_data_dir):
         print("Please, provide the correct path to the dataset in the `-raw_data_dir` argument.")
         exit(-1)
 
-    speech_dir     = path.join(raw_data_dir, "speech")
-    motion_dir     = path.join(raw_data_dir, "motion")
+    speech_dir     = path.join(raw_data_dir, "Audio")
+    motion_dir     = path.join(raw_data_dir, "Motion")
 
     for sub_dir in [speech_dir, motion_dir]:
         if not path.isdir(sub_dir):
