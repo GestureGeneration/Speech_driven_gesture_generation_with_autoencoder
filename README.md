@@ -68,7 +68,7 @@ As a result of running this script, the dataset is created in `--proc_data_dir`:
 - the training dataset files `X_train.npy`, `Y_train.npy` and the validation dataset files `X_dev.npy`, `Y_dev.npy`are binary numpy files
 - the audio inputs for testing (such as `X_test_NaturalTalking_04.npy`) are under the `/test_inputs/` subfolder
 
-There rest of the folders in --proc_data_dir (e.g. `/dev_inputs/` or `/train/`) can be ignored (they are a side effect of the preprocessing script).
+There rest of the folders in `--proc_data_dir` (e.g. `/dev_inputs/` or `/train/`) can be ignored (they are a side effect of the preprocessing script).
 
 ## 3. Learn motion representation by AutoEncoder and encode the training and validation datasets
 ```python
