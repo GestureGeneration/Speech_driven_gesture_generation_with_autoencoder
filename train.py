@@ -126,4 +126,9 @@ def train(model_file):
 
 
 if __name__ == "__main__":
-    train(sys.argv[1]+".hdf5")
+    model_file = sys.argv[1]
+    
+    if not model_file.endswith(".hdf5"):
+        model_file += ".hdf5"
+    
+    train(model_file)
