@@ -15,12 +15,12 @@ from os import path
 from data_params import parser
 
 # Indices for train/dev/test split
-DEV_LAST_ID = 3
-TEST_LAST_ID = 6
-TRAIN_LAST_ID = 31
+DEV_LAST_ID = 2
+TEST_LAST_ID = 2
+TRAIN_LAST_ID = 23
 
-audio_prefix = "NaturalTalking_0"
-motion_prefix = "NaturalTalking_0"
+audio_prefix = "Recording_0"
+motion_prefix = "Recording_0"
 
 def copy_files(ind, raw_d_dir, processed_d_dir, data_split, suffix=""):
     # Copy audio
