@@ -86,9 +86,6 @@ def _encode_vectors(audio_filename, gesture_filename, mode, args, augment_with_c
     ges_str = np.load(gesture_filename)
     output_vectors = ges_str['clips']
 
-    # Subsample motion (from 60 fsp to 20 fps)
-    output_vectors = output_vectors[0::3]
-
     if debug:
         print(input_vectors.shape)
         print(output_vectors.shape)
