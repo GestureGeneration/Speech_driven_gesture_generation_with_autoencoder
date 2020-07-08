@@ -3,7 +3,7 @@
 
 ![ImageOfIdea](visuals/SpeechReprMotion.png?raw=true "Idea")
 
-This branch contains the implementation of the IVA '19 paper "Analyzing Input and Output Representations for Speech-Driven Gesture Generation" for [GENEA Challenge 2020](https://genea-workshop.github.io/2020/#gesture-generation-challenge).
+This branch contains the implementation of the IVA '19 paper [Analyzing Input and Output Representations for Speech-Driven Gesture Generation](https://dl.acm.org/doi/abs/10.1145/3308532.3329472) for [GENEA Challenge 2020](https://genea-workshop.github.io/2020/#gesture-generation-challenge).
 
 ## Requirements
 
@@ -84,7 +84,7 @@ More information can be found in the folder `motion_repr_learning`
 ```sh
 python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE DIM
 # MODEL_NAME = file name for the model
-# EPOCHS = how many epochs do we want to train the model (recommended - 100)
+# EPOCHS = how many epochs do we want to train the model (recommended - 500)
 # DATA_DIR = directory with the data (should be same as before)
 # N_INPUT = how many dimension does speech data have (default - 26)
 # ENCODE = True (because we use AutoEncoder)
@@ -99,7 +99,7 @@ python predict.py MODEL_NAME.hdf5 INPUT_SPEECH_FILE OUTPUT_GESTURE_FILE
 
 ```sh
 # Usage example
-python predict.py model.hdf5 data/test_inputs/X_test_NaturalTalking_04.npy data/test_inputs/predict_04_20fps.txt
+python predict.py model.hdf5 data/test_inputs/X_test_NaturalTalking_04.npy data/test_inputs/predict_04_20fps.npy
 ```
 
 The predicted gestures have to be decoded with `decode.py`, which reuses the config from step 3.
