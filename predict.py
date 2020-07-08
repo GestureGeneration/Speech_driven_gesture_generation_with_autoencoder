@@ -7,17 +7,6 @@ The gestures will be written in the text file:
 import sys
 from keras.models import load_model
 import numpy as np
-from scipy.signal import savgol_filter
-
-
-def smoothing(motion):
-
-    smoothed = [savgol_filter(motion[:,i], 9, 3) for i in range(motion.shape[1])]
-
-    new_motion = np.array(smoothed).transpose()
-
-    return new_motion
-
 
 def predict(model_name, input_file, output_file):
     """ Predict human gesture based on the speech
@@ -35,10 +24,8 @@ def predict(model_name, input_file, output_file):
 
     predicted = np.array(model.predict(audio))
 
-    smoothed = smoothing(predicted)
-
     print("Encoding shape is: ", predicted.shape)
-    np.savetxt(output_file, smoothed)
+    np.savetxt(output_file, predicted)
 
 
 if __name__ == "__main__":

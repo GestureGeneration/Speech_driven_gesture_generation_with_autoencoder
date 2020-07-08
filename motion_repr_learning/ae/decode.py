@@ -14,6 +14,18 @@ import numpy as np
 
 import sys
 
+from scipy.signal import savgol_filter
+
+
+def smoothing(motion):
+
+    smoothed = [savgol_filter(motion[:,i], 9, 3) for i in range(motion.shape[1])]
+
+    new_motion = np.array(smoothed).transpose()
+
+    return new_motion
+
+
 if __name__ == '__main__':
     # Make sure that the two mandatory arguments are provided
     if args.input_file is None or args.output_file is None:
@@ -38,6 +50,9 @@ if __name__ == '__main__':
 
     # Decode it
     decoding = tr.decode(nn, encoding)
+
+    # Smoothing
+    decoding = smoothing(decoding)
 
     print(decoding.shape)
 
