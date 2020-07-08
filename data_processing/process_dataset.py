@@ -42,7 +42,7 @@ def _encode_vectors(audio_filename, gesture_filename, mode, args, augment_with_c
     elif mode == 'train':
         seq_length = args.seq_len
     elif mode == 'dev':
-        seq_length = 5 * args.seq_len # TODO(RN): magic number
+        seq_length = 5 * args.seq_len
     else:
         print(f"ERROR: Unknown dataset type '{mode}'! Possible values: 'train', 'dev' and 'test'.")
         exit(-1)
@@ -87,6 +87,7 @@ def _encode_vectors(audio_filename, gesture_filename, mode, args, augment_with_c
     output_vectors = ges_str['clips']
 
     if debug:
+        print(gesture_filename)
         print(input_vectors.shape)
         print(output_vectors.shape)
 

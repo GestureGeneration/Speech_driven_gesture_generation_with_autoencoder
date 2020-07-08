@@ -1,7 +1,6 @@
 # This code was written by Simon Alexanderson
 # and is released here: https://github.com/simonalexanderson/PyMO
 
-
 import os
 import sys
 
@@ -21,8 +20,12 @@ import joblib as jl
 
 def feat2bvh(feat_file, bvh_file):
 
-    features = np.load(feat_file)['clips']
-    print(features.shape)
+    features = np.load(feat_file)
+    print("Original features shape: ", features.shape)
+
+    # shorten sequence length for visualization
+    features = features[:1200]
+    print("Shortened features shape: ", features.shape)
 
     # transform the data back to it's original shape
     # note: in a real scenario this is usually done with predicted data   
@@ -49,7 +52,7 @@ if __name__ == '__main__':
 
 
     # load data pipeline
-    pipeline = jl.load('processed/data_pipe.sav')
-    
+    pipeline = jl.load(params.pipeline_dir + 'data_pipe.sav')
+
     # convert a file
     feat2bvh(params.feat_dir, params.bvh_dir)
