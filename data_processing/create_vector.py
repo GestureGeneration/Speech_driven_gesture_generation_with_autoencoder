@@ -13,7 +13,7 @@ import pyquaternion as pyq
 
 from tools import *
 
-N_OUTPUT = 192 * 2 # Number of gesture features (position)
+N_OUTPUT = 384 # Number of gesture features (position)
 WINDOW_LENGTH = 50 # in miliseconds
 FEATURES = "MFCC"
 
@@ -191,36 +191,47 @@ def create_vectors(audio_filename, gesture_filename, nodes):
 
         input_vectors = np.concatenate((mfcc_vectors,spectr_vectors, pros_vectors), axis=1)
 
-    # Step 2: Vectorize BVH
+    # Step 2: Read motions
 
-    f = open(gesture_filename, 'r')
-    org = f.readlines()
-    frametime = org[310].split()
+    motion_format = "bvh"
 
-    del org[0:311]
+    if motion_format == "npz":
+        ges_str = np.load(gesture_filename)
+        output_vectors = ges_str['clips']
 
-    bvh_len = len(org)
+        # Subsample motion (from 60 fsp to 20 fsp)
+        output_vectors = output_vectors[0::3]
 
-    for idx, line in enumerate(org):
-        org[idx] = [float(x) for x in line.split()]
 
-    for i in range(0, bvh_len):
-        for j in range(0, int(306 / 3)):
-            st = j * 3
-            del org[i][st:st + 3]
+    elif motion_format == "bvh":
+        f = open(gesture_filename, 'r')
+        org = f.readlines()
+        frametime = org[310].split()
 
-    # if data is 100fps, cut it to 20 fps (every fifth line)
-    # if data is approx 24fps, cut it to 20 fps (del every sixth line)
-    if float(frametime[2]) == 0.0416667:
-        del org[::6]
-    elif float(frametime[2]) == 0.010000:
-        org = org[::5]
-    else:
-        print("smth wrong with fps of " + gesture_filename)
+        del org[0:311]
 
-    output_vectors = rot_vec_to_abs_pos_vec(org, nodes)
+        bvh_len = len(org)
 
-    f.close()
+        for idx, line in enumerate(org):
+            org[idx] = [float(x) for x in line.split()]
+
+        for i in range(0, bvh_len):
+            for j in range(0, int(306 / 3)):
+                st = j * 3
+                del org[i][st:st + 3]
+
+        # if data is 100fps, cut it to 20 fps (every fifth line)
+        # if data is approx 24fps, cut it to 20 fps (del every sixth line)
+        if float(frametime[2]) == 0.0416667:
+            del org[::6]
+        elif float(frametime[2]) == 0.010000:
+            org = org[::5]
+        else:
+            print("smth wrong with fps of " + gesture_filename)
+
+        output_vectors = rot_vec_to_abs_pos_vec(org, nodes)
+
+        f.close()
 
     # Step 3: Align vector length
     input_vectors, output_vectors = shorten(input_vectors, output_vectors)
