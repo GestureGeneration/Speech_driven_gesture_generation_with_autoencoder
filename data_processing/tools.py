@@ -1,7 +1,7 @@
 """
 This script contains supporting function for the data processing.
 It is used in several other scripts:
-for generating bvh files, aligning sequences and calculation of speech features
+for calculation of speech features, aligning sequences and generating bvh files
 """
 
 import ctypes
@@ -289,38 +289,3 @@ def calculate_spectrogram(audio_filename):
     log_spectr = np.log(abs(spectr)+eps)
 
     return np.transpose(log_spectr)
-
-if __name__ == "__main__":
-
-    Debug=1
-
-    if Debug:
-
-        audio_filename = "/home/taras//Documents/Datasets/SpeechToMotion/" \
-                         "Japanese/speech/audio1099_16k.wav"
-
-        feature = extract_prosodic_features(audio_filename)
-
-    else:
-
-        if False:
-
-            DATA_DIR = "/home/taras/Documents/Datasets/SpeechToMotion/Japanese/TheLAtest/"
-
-            DATA_FILE = pd.read_csv(DATA_DIR + '/gg-dev.csv')
-            X = np.array([])
-            Y = np.array([])
-
-            whole_f0 = []
-
-            for i in range(len(DATA_FILE)):
-                f0 = calculate_pitch(DATA_FILE['wav_filename'][i])
-
-                whole_f0 = np.append(whole_f0, f0, axis=0)
-
-                print(f0.shape)
-                print(np.shape(whole_f0))
-
-            hist, _ = np.histogram(whole_f0, bins=50)
-            plt.plot(hist, linewidth=3, label="Hist")
-            plt.show()
