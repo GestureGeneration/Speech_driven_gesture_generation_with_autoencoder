@@ -187,12 +187,6 @@ def main():
         original = np.loadtxt(original_file)
         predicted = np.loadtxt(predicted_file)
 
-        if original.shape[0] != predicted.shape[0]:
-            # Cut them to the same length
-            length = min(original.shape[0], predicted.shape[0])
-            original = original[:length]
-            predicted = predicted[:length]
-
         original_distance = measures[args.measure](
             original)[:, selected_joints]
         predicted_distance = measures[args.measure](
