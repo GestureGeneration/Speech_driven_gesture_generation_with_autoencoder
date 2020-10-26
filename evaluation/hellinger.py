@@ -11,6 +11,7 @@ import os
 import re
 
 import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from matplotlib.patches import Rectangle
@@ -188,7 +189,7 @@ def main():
         index = original.index * 20
         bins = [format(i, '.2f') for i in list(index)]
 
-        # Plot velocity in a range of [0, 15]
+        # Plot speed in a range of [0, 15]
         bins = bins[:-4]
         original_hist = original_hist[:-4]
 
@@ -217,8 +218,8 @@ def main():
             predicted_hist = results[key]['hist'][:-4]
             label = key.split('-')[1].replace('_smooth', '*')
 
-            if 'Aud2Pose' in label:
-                label += ' [14]'
+            #if 'Aud2Pose' in label:
+            #    label += ' [18]'
 
             handle, = ax.plot(bins, normalize(predicted_hist) * 100, color=color)
 
@@ -236,7 +237,7 @@ def main():
         ax.legend(legend_handles, legend_labels,
                   ncol=3, handletextpad=0.5, columnspacing=-2.15,
                   labelspacing=0.35)
-        ax.set_xlabel('Velocity (cm/s)')
+        ax.set_xlabel('Speed (cm/s)')
         ax.set_ylabel('Frequency (%)')
         ax.set_xticks(np.arange(16))
         ax.tick_params(pad=6)
@@ -244,7 +245,7 @@ def main():
             MaxNLocator(nbins='auto', steps=[1, 2, 2.5, 5, 10], integer=True))
 
         plt.subplots_adjust(left=0.09, right=0.98, top=0.98, bottom=0.12)
-        plt.savefig(os.path.join(out, 'velocity_histogram.pdf'))
+        plt.savefig(os.path.join(out, 'speed_histogram.pdf'))
         plt.show()
     
     print('Results were writen in ' + out)

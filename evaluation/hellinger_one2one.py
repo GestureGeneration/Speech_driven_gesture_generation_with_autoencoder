@@ -37,15 +37,15 @@ def read_joint_names(filename):
     return joint_names
 
 
-def compute_velocity(data, dim=3):
-    """Compute velocity between adjacent frames
+def compute_speed(data, dim=3):
+    """Compute speed between adjacent frames
 
       Args:
           data:         array containing joint positions of gesture
           dim:          gesture dimensionality
 
       Returns:
-          vel_norms:    velocities of each joint between each adjacent frame
+          speeds:       velocities of each joint between each adjacent frame
     """
 
     # First derivative of position is velocity
@@ -54,15 +54,15 @@ def compute_velocity(data, dim=3):
     num_vels = vels.shape[0]
     num_joints = vels.shape[1] // dim
 
-    vel_norms = np.zeros((num_vels, num_joints))
+    speeds = np.zeros((num_vels, num_joints))
 
     for i in range(num_vels):
         for j in range(num_joints):
             x1 = j * dim + 0
             x2 = j * dim + dim
-            vel_norms[i, j] = np.linalg.norm(vels[i, x1:x2])
+            speeds[i, j] = np.linalg.norm(vels[i, x1:x2])
 
-    return vel_norms
+    return speeds
 
 
 def normalize(hist):
@@ -156,14 +156,14 @@ def main():
     if args.match_yticks:
         max_freqs = []
 
-    # Compute velocity histogram for original gestures
+    # Compute speed histogram for original gestures
     original_hists = []
     for original_file in original_files:
         original = np.loadtxt(original_file)
 
-        # Compute velocity histogram
-        original_velocity = compute_velocity(original)[:, selected_joints]
-        original_hist, _ = np.histogram(original_velocity, bins=bins)
+        # Compute speed histogram
+        original_speed = compute_speed(original)[:, selected_joints]
+        original_hist, _ = np.histogram(original_speed, bins=bins)
 
         original_hists.append(original_hist)
 
@@ -202,14 +202,14 @@ def main():
         dir_key = os.path.basename(predicted_dir)
         results[dir_key] = dict()
 
-        # Compute velocity histogram for predicted gestures
+        # Compute speed histogram for predicted gestures
         predicted_hists = []
         for predicted_file in predicted_files:
             predicted = np.loadtxt(predicted_file)
 
-            # Compute velocity histogram
-            predicted_velocity = compute_velocity(predicted)[:, selected_joints]
-            predicted_hist, _ = np.histogram(predicted_velocity, bins=bins)
+            # Compute speed histogram
+            predicted_speed = compute_speed(predicted)[:, selected_joints]
+            predicted_hist, _ = np.histogram(predicted_speed, bins=bins)
 
             predicted_hists.append(predicted_hist)
 
@@ -286,7 +286,7 @@ def main():
         # Velocities are computed in 20fps: make them into cm/s
         plot_bins = [format(b, '.2f') for b in bins[:-1] * 20]
 
-        # Plot velocity in a range of [0, 15]
+        # Plot speed in a range of [0, 15]
         plot_bins = plot_bins[:-4]
 
         # Make an output directory
@@ -348,7 +348,7 @@ def main():
             ax.legend(legend_handles, legend_labels,
                       ncol=3, handletextpad=0.5, columnspacing=-2.15,
                       labelspacing=0.35)
-            ax.set_xlabel('Velocity (cm/s)')
+            ax.set_xlabel('Speed (cm/s)')
             ax.set_ylabel('Frequency (%)')
             ax.set_xticks(np.arange(16))
             ax.tick_params(pad=6)
@@ -361,7 +361,7 @@ def main():
                     MaxNLocator(nbins='auto', steps=[1, 2, 2.5, 5, 10], integer=True))
 
             plt.subplots_adjust(left=0.09, right=0.98, top=0.98, bottom=0.12)
-            plt.savefig(os.path.join(vis_out, os.path.splitext(file_key)[0] + '_velocity_histogram.pdf'))
+            plt.savefig(os.path.join(vis_out, os.path.splitext(file_key)[0] + '_speed_histogram.pdf'))
             plt.show()
 
             plt.clf()
