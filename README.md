@@ -1,9 +1,9 @@
-# Analyzing Input and Output Representations for Speech-Driven Gesture Generation
+# Aud2Repr2Pose: Analyzing input and output representations for speech-driven gesture generation 
 [Taras Kucherenko](https://svito-zar.github.io/), [Dai Hasegawa](https://hasegawadai.info/), [Gustav Eje Henter](https://people.kth.se/~ghe/), Naoshi Kaneko, [Hedvig Kjellström](http://www.csc.kth.se/~hedvig/)
 
 ![ImageOfIdea](visuals/SpeechReprMotion.png?raw=true "Idea")
 
-This repository contains Keras and Tensorflow based implementation of the speech-driven gesture generation by a neural network. 
+This repository contains Keras and Tensorflow based implementation of the speech-driven gesture generation by a neural network which was published at  International Conference on Intelligent Virtual Agents (IVA'19) and the extention was published in International Journal of Human-Computer Interaction in 2021.
 
 The [project website](https://svito-zar.github.io/audio2gestures/) contains all the information about this project, including [video](https://youtu.be/Iv7UBe92zrw) explanation of the method and the [paper](https://www.researchgate.net/publication/331645229_Analyzing_Input_and_Output_Representations_for_Speech-Driven_Gesture_Generation).
 
@@ -174,12 +174,12 @@ Use [animation server](https://secret-meadow-14164.herokuapp.com/coordinates.htm
 ## Citation
 If you use this code in your research please cite the paper:
 ```
-@inproceedings{kucherenko2019analyzing,
-  title={Analyzing Input and Output Representations for Speech-Driven Gesture Generation},
-  author={Kucherenko, Taras and Hasegawa, Dai and Henter, Gustav Eje  and Kaneko, Naoshi and Kjellstr{\"o}m, Hedvig},
-  booktitle=={International Conference on Intelligent Virtual Agents (IVA ’19)},
-  year={2019},
-  publisher = {ACM},
+@article{kucherenko2021moving,
+  title={Moving fast and slow: Analysis of representations and post-processing in speech-driven automatic gesture generation},
+  author={Kucherenko, Taras and Hasegawa, Dai and Kaneko, Naoshi and Henter, Gustav Eje and Kjellstr{\"o}m, Hedvig},
+  journal={International Journal of Human–Computer Interaction},
+  doi={10.1080/10447318.2021.1883883},
+  year={2021}
 }
 ```
 
