@@ -66,7 +66,7 @@ cd ..
 
 As a result of running this script, the dataset is created in `--proc_data_dir`:
 - the training dataset files `X_train.npy`, `Y_train.npy` and the validation dataset files `X_dev.npy`, `Y_dev.npy`are binary numpy files
-- the audio inputs for testing (such as `X_test_NaturalTalking_04.npy`) are under the `/test_inputs/` subfolder
+- the audio inputs for testing (such as `X_test_Recoding_02.npy`) are under the `/test_inputs/` subfolder
 
 There rest of the folders in `--proc_data_dir` (e.g. `/dev_inputs/` or `/train/`) can be ignored (they are a side effect of the preprocessing script).
 
@@ -94,7 +94,7 @@ python train.py MODEL_NAME EPOCHS DATA_DIR N_INPUT ENCODE DIM
 ## 5. Predict gesture
 
 ```sh
-python predict.py MODEL_NAME.hdf5 INPUT_SPEECH_FILE OUTPUT_GESTURE_FILE
+python predict.py MODEL_NAME.hdf5 INPUT_SPEECH_FILE.npy OUTPUT_GESTURE_FILE.npy
 ```
 
 ```sh
@@ -104,7 +104,7 @@ python predict.py model.hdf5 data/test_inputs/X_test_NaturalTalking_04.npy data/
 
 The predicted gestures have to be decoded with `decode.py`, which reuses the config from step 3.
 ```sh
-python motion_repr_learning/ae/decode.py python decode.py -input_file INPUT_FILE -output_file OUTPUT_FILE --layer1_width DIM --batch_size=8 
+python motion_repr_learning/ae/decode.py -input_file INPUT_FILE.npy -output_file OUTPUT_FILE.npy --layer1_width DIM --batch_size=8 
 ```
 
 Convert the motion from exponential maps to euler angles and write into BVH file
